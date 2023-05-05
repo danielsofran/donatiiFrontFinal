@@ -4,17 +4,16 @@ import Colors from "../utils/Colors";
 import PictureNavigator from "./small/PictureNavigator";
 import Progress from "./small/Progress";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import {CauzaAdapost, CauzaPersonala} from "../model/Cauza";
+import {Cauza, CauzaAdapost, CauzaPersonala} from "../model/Cauza";
 import HeartsStream from "./small/HeartsStream";
-import AnimalsTag from "./small/AnimalTag";
+import {AnimalsTag, AnimalTag} from "./small/AnimalTag";
 import {LinearGradient} from "expo-linear-gradient";
+import {User} from "../model/User";
 
 
-const CauzaPreview = (props) => {
-    const { pictures, tags, sustained, numberOfLikes } = props
-    const {cauza}: {cauza: CauzaPersonala | CauzaAdapost} = props
+const CauzaPreview = ({cauza, user} : {cauza: Cauza, user: User}) => {
 
-    const [liked, setLiked] = useState(sustained);
+    const [liked, setLiked] = useState(cauza.id in user.cauze);
 
     function handleLike() {
         setLiked(!liked);
@@ -55,23 +54,26 @@ const CauzaPreview = (props) => {
             </View>
 
             <Text style={styles.description}>{cauza.descriere}</Text>
-            <PictureNavigator pictures={pictures}></PictureNavigator>
+            <PictureNavigator pictures={cauza.poze}></PictureNavigator>
             <View style={{marginHorizontal: Platform.OS === 'web' ? 20 : 0 }}>
             <View style={{
                 paddingLeft: 10,
                 paddingRight: 10,
                 paddingBottom: 5,
             }}>
-                <Progress current={cauza.sumaStransa} target={cauza.sumaMinima}></Progress>
+                <Progress cauza={cauza}/>
             </View>
             <View style={{
                 flexDirection: 'row',
                 justifyContent: 'space-between',
             }}>
-                <AnimalsTag animals={tags}/>
+                {cauza instanceof CauzaPersonala ?
+                    <AnimalTag animal={cauza.tagAnimal.nume}/> :
+                    <AnimalsTag animals={cauza.taguri.map(tag => tag.nume)}/>
+                }
                 <View style={{flexDirection: 'row', alignItems: 'center'}}>
                     <Text style={{fontSize: 12, paddingRight: 2, paddingBottom: 0}}>
-                        {numberOfLikes}
+                        {cauza.nrSustinatori}
                     </Text>
                     <TouchableOpacity style={styles.like} onPress={handleLike}>
                         <MaterialCommunityIcons name={liked ? 'heart' : 'heart-outline'} size={30} color={liked ? 'red' : 'gray'} />

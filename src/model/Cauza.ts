@@ -19,6 +19,14 @@ abstract class AbstractCauza {
         return this.sumaMinima < this.sumaStransa;
     }
 
+    getPozeUrls() : string[] {
+        let rez: string[] = [];
+        for(let poza of this.poze) {
+            rez.push(poza.url);
+        }
+        return rez;
+    }
+
     static deserialize(json: any): AbstractCauza {
         let rez: AbstractCauza = Object.assign(this, json);
         rez.user = Object.assign(new User(), json['user']);

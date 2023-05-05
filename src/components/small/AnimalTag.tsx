@@ -2,7 +2,7 @@ import { StyleSheet, View, Text } from "react-native";
 import Animal from "../../utils/AnimalTagsEmojies";
 
 
-const AnimalTag = ({ animal }: { animal: string }) => {
+export const AnimalTag = ({ animal }: { animal: string }) => {
     return (
         <View style={[styles.tag, {backgroundColor: Animal[animal].color}]}>
             <Text>{animal} </Text>
@@ -11,7 +11,7 @@ const AnimalTag = ({ animal }: { animal: string }) => {
     )
 }
 
-const AnimalsTag = ({ animals }: { animals: string[] }) => {
+export const AnimalsTag = ({ animals }: { animals: string[] }) => {
     return (
         <View style={styles.container}>
             {animals.map((animal, index) => {
@@ -38,6 +38,7 @@ const styles = StyleSheet.create({
     tag : {
         flexDirection: 'row',
         marginHorizontal: 5,
+        marginBottom: 5,
         fontSize: 8,
         borderRadius: 25,
         padding: 3,
@@ -45,5 +46,3 @@ const styles = StyleSheet.create({
         overflow: 'hidden',
     }
 });
-
-export default AnimalsTag;

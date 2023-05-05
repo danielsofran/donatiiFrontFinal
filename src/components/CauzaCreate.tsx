@@ -7,6 +7,7 @@ import Loader from "./small/Loader";
 import {TagAnimal} from "../model/TagAnimal";
 import Animal from "../utils/AnimalTagsEmojies";
 import PicturePicker from "./small/PicturePicker";
+import { AnimalTag } from "./small/AnimalTag";
 
 const CauzaCreate = (props) => {
     const [title, setTitle] = useState("");
@@ -30,10 +31,10 @@ const CauzaCreate = (props) => {
 
         let tag = new TagAnimal()
         tag.id = 0
-        tag.nume='dogs';
+        tag.nume='Dogs';
         let tag2 = new TagAnimal()
         tag2.id = 1
-        tag2.nume='cats';
+        tag2.nume='Cats';
         setTags([tag, tag2]);
         // Fetch for tags
     },[])
@@ -137,7 +138,8 @@ const CauzaCreate = (props) => {
                     {tags.map((tag) => (
                         <View key={tag.id} style={styles.checkboxContainer}>
                             <CustomCheckbox value={false}
-                                            onValueChange={() => handleInterestChange(tag)} label={tag.nume + ' ' + Animal[tag.nume]} />
+                                            onValueChange={() => handleInterestChange(tag)} label={""} />
+                            <AnimalTag animal={tag.nume} />
                         </View>
                     ))}
                 </View>

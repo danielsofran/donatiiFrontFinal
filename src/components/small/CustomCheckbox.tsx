@@ -36,6 +36,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         marginRight: 10,
+        marginTop: 7.5,
+
     },
     checkedCheckbox: {
         backgroundColor: 'green',

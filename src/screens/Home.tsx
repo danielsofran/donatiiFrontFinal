@@ -1,17 +1,23 @@
 import {User} from "../model/User";
 import {View, Text, StyleSheet} from "react-native";
 import Colors from "../utils/Colors";
+import {CauzeList} from "../components/CauzeList";
+import {useEffect, useState} from "react";
+import {axiosInstance} from "../api/axiosInstance";
+import {Cauza} from "../model/Cauza";
 
 const Home = ({ navigation, route }) => {
     const user: User = route.params.user;
+    const [cauze, setCauze] = useState<Cauza[]>([]);
+
+    useEffect(() => {
+        axiosInstance.get('/cauza/all').then((response) => {
+            setCauze(response.data);
+        })
+    }, [])
 
     return (
-        <View style={styles.container}>
-            <Text style={styles.title}>Home</Text>
-            <Text style={styles.text}>Welcome {user.fullName}</Text>
-            <Text style={styles.text}>Email: {user.email}</Text>
-            <Text style={styles.text}><>Interese: {user.interese.map(value => value.nume)}</></Text>
-        </View>
+        <CauzeList cauze={cauze} user={user}/>
     );
 }
 

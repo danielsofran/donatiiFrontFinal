@@ -1,17 +1,20 @@
 import React from 'react';
-import {View, StyleSheet, ScrollView} from 'react-native';
-import ImagePickerComponent from "../components/small/PicturePicker";
+import {ScrollView, StyleSheet} from 'react-native';
 import {CauzaAdapost, CauzaPersonala} from "../model/Cauza";
 import CauzaPreview from "../components/CauzaPreview";
-import Animal from "../utils/AnimalTagsEmojies";
+import {User} from "../model/User";
+import {GenderType} from "../model/Enums";
+import {TagAnimal} from "../model/TagAnimal";
+import {CauzeList} from "../components/CauzeList";
 
 const AnotherComponent = () => {
-    const pictures = [
-        { id: '1', imageUri: 'https://media.prosport.ro/okdJ9JxHdiYZ0GDv1z6YvQIPAb4=/1280x720/smart/filters:contrast(5):format(webp):quality(80)/https%3A%2F%2Fwww.prosport.ro%2Fwp-content%2Fuploads%2F2018%2F12%2F17791476%2F1-cristiano-ronaldo-real.jpg' },
-        { id: '2', imageUri: 'https://picsum.photos/id/1025/300/300' },
-        { id: '3', imageUri: 'https://picsum.photos/id/1035/300/300' },
-        { id: '4', imageUri: 'https://picsum.photos/id/1045/300/300' },
-    ];
+    const tagCaine: TagAnimal = new TagAnimal()
+    tagCaine.id = 1
+    tagCaine.nume = 'Dogs'
+
+    const tagPisica: TagAnimal = new TagAnimal()
+    tagPisica.id = 2
+    tagPisica.nume = 'Cats'
 
     const cauza: CauzaAdapost = new CauzaAdapost()
     cauza.titlu = 'Cauza'
@@ -21,6 +24,7 @@ const AnotherComponent = () => {
     cauza.locatie = 'Bucuresti'
     cauza.nume = 'Adapost'
     cauza.id = 1
+    cauza.taguri = [tagCaine, tagPisica]
 
     const cauzaPersonala: CauzaPersonala = new CauzaPersonala()
     cauzaPersonala.titlu = 'Cauza'
@@ -32,12 +36,23 @@ const AnotherComponent = () => {
     cauzaPersonala.varstaAnimal = 2
     cauzaPersonala.rasaAnimal = 'Caine'
     cauzaPersonala.id = 2
+    cauzaPersonala.tagAnimal = tagCaine
+
+    const user: User = new User()
+    user.cauze = [cauza, cauzaPersonala]
+    user.id = 1
+    user.fullName = 'Ion Popescu'
+    user.email = 'popescu.ion@gmail.com'
+    user.coins = 1000
+    user.gender = GenderType.Male
+    user.interese = [tagCaine, tagPisica]
 
     return (
-        <ScrollView>
-            <CauzaPreview cauza={cauza} pictures={pictures} tags={['Cats', 'Dogs']} sustained={false} numberOfLikes={6}></CauzaPreview>
-            <CauzaPreview cauza={cauzaPersonala} pictures={pictures} tags={['Turtles']} sustained={false} numberOfLikes={6}></CauzaPreview>
-        </ScrollView>
+        // <ScrollView>
+        //     <CauzaPreview cauza={cauza} user={user}/>
+        //     <CauzaPreview cauza={cauzaPersonala} user={user}/>
+        // </ScrollView>
+        <CauzeList cauze={[cauza, cauzaPersonala,cauza, cauzaPersonala,cauza, cauzaPersonala,]} user={user}/>
     );
 };
 

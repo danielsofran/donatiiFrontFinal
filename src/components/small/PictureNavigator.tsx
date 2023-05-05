@@ -1,13 +1,9 @@
 import React, {useState, useEffect} from 'react';
 import { View, StyleSheet, FlatList, Image } from 'react-native';
-
-interface Picture {
-    id: string;
-    imageUri: string;
-}
+import {Poza} from "../../model/Poza";
 
 interface Props {
-    pictures: Picture[];
+    pictures: Poza[];
 }
 
 const PictureNavigator: React.FC<Props> = ({ pictures }) => {
@@ -15,7 +11,7 @@ const PictureNavigator: React.FC<Props> = ({ pictures }) => {
 
     useEffect(() => {
         pictures.forEach((picture) => {
-            Image.getSize(picture.imageUri, (width, height) => {
+            Image.getSize(picture.url, (width, height) => {
                 setAspectRatios((prevAspectRatios) => ({
                     ...prevAspectRatios,
                     [picture.id]: width / height,
@@ -28,11 +24,11 @@ const PictureNavigator: React.FC<Props> = ({ pictures }) => {
         <View style={styles.container}>
                 <FlatList
                     data={pictures}
-                    keyExtractor={item => item.id}
+                    keyExtractor={item => item.id.toString()}
                     horizontal
                     renderItem={({ item }) => (
                         <View style={styles.pictureContainer}>
-                            <Image source={{ uri: item.imageUri }} style={{height: 150, aspectRatio: aspectRatios[item.id]}}/>
+                            <Image source={{ uri: item.url }} style={{height: 150, aspectRatio: aspectRatios[item.id]}}/>
                         </View>
                         )}
                 >
