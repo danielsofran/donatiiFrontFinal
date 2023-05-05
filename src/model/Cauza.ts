@@ -3,7 +3,7 @@ import {Serializable} from "./Deserialize";
 import {TagAnimal} from "./TagAnimal";
 import {Poza} from "./Poza";
 
-abstract class AbstractCauza implements  Serializable<AbstractCauza>{
+abstract class AbstractCauza {
     id: number = 0;
     user: User = new User();
     descriere: string = "";
@@ -19,7 +19,7 @@ abstract class AbstractCauza implements  Serializable<AbstractCauza>{
         return this.sumaMinima < this.sumaStransa;
     }
 
-    deserialize(json: any): AbstractCauza {
+    static deserialize(json: any): AbstractCauza {
         let rez: AbstractCauza = Object.assign(this, json);
         rez.user = Object.assign(new User(), json['user']);
         rez.poze = [];
@@ -29,8 +29,8 @@ abstract class AbstractCauza implements  Serializable<AbstractCauza>{
         return rez;
     }
 
-    deserializeArray(json: any): AbstractCauza[] {
-        return json.map(this.deserialize);
+    static deserializeArray(json: any): AbstractCauza[] {
+        return json.map(AbstractCauza.deserialize);
     }
 }
 
@@ -41,7 +41,7 @@ export class CauzaPersonala extends AbstractCauza implements Serializable<CauzaP
     rasaAnimal: string = "";
 
     deserialize(json: any): CauzaPersonala {
-        let rez: CauzaPersonala = new CauzaPersonala().deserialize(json);
+        let rez: any = AbstractCauza.deserialize(json);
         rez.tagAnimal = new TagAnimal().deserialize(json['tagAnimal']);
         rez.numeAnimal = json['numeAnimal'];
         rez.varstaAnimal = json['varstaAnimal'];
@@ -60,7 +60,7 @@ export class CauzaAdapost extends AbstractCauza implements Serializable<CauzaAda
     taguri: TagAnimal[] = [];
 
     deserialize(json: any): CauzaAdapost {
-        let rez: CauzaAdapost = new CauzaAdapost().deserialize(json);
+        let rez: any = AbstractCauza.deserialize(json);
         rez.nume = json['nume'];
         rez.taguri = [];
         for(let tag of json['taguri']) {

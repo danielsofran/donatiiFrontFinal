@@ -7,6 +7,7 @@ import {NavigationContainer} from "@react-navigation/native";
 import Register from "./src/screens/Register";
 import AnotherComponent from "./src/xtest/TestCauzaPreview";
 import { ApiTest } from "./src/xtest/AxiosTest";
+import Home from "./src/screens/Home";
 
 const Stack = createStackNavigator();
 
@@ -17,6 +18,7 @@ export default function App() {
           {/*<Stack.Screen name={"Test"} component={ApiTest} />*/}
           {<Stack.Screen name="Login" component={Login} />}
           {<Stack.Screen name="Register" component={Register} />}
+          <Stack.Screen name="Home" component={Home} />
       </Stack.Navigator>
     </NavigationContainer>
   );

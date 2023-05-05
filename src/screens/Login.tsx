@@ -32,9 +32,9 @@ const Login = ({ navigation }) => {
             userLogin.email = email;
             userLogin.parola = password;
             axiosInstance.post('/user/login', userLogin).then((response) => {
-                userLogin = response.data
+                userLogin = new User().deserialize(response.data)
                 console.log(response.data)
-                console.log(userLogin.interese)
+                console.log(userLogin)
 
                 setLoading(false);
                 navigation.navigate('Home', {user: userLogin});

@@ -1,6 +1,6 @@
 import {User} from "../model/User";
 import {View, Text, StyleSheet} from "react-native";
-import {Colors} from "react-native/Libraries/NewAppScreen";
+import Colors from "../utils/Colors";
 
 const Home = ({ navigation, route }) => {
     const user: User = route.params.user;
@@ -10,7 +10,7 @@ const Home = ({ navigation, route }) => {
             <Text style={styles.title}>Home</Text>
             <Text style={styles.text}>Welcome {user.fullName}</Text>
             <Text style={styles.text}>Email: {user.email}</Text>
-            <Text style={styles.text}><>Interese: {user.interese}</></Text>
+            <Text style={styles.text}><>Interese: {user.interese.map(value => value.nume)}</></Text>
         </View>
     );
 }
@@ -18,7 +18,7 @@ const Home = ({ navigation, route }) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.White,
         alignItems: 'center',
         justifyContent: 'center',
     },
