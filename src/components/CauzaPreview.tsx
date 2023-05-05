@@ -4,7 +4,7 @@ import Colors from "../utils/Colors";
 import PictureNavigator from "./small/PictureNavigator";
 import Progress from "./small/Progress";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import {Cauza, CauzaAdapost, CauzaPersonala} from "../model/Cauza";
+import {Cauza, CauzaAdapost, CauzaPersonala, isCauzaAdapost, isCauzaPersonala} from "../model/Cauza";
 import HeartsStream from "./small/HeartsStream";
 import {AnimalsTag, AnimalTag} from "./small/AnimalTag";
 import {LinearGradient} from "expo-linear-gradient";
@@ -35,7 +35,7 @@ const CauzaPreview = ({cauza, user} : {cauza: Cauza, user: User}) => {
             <View style={styles.titleLocation}>
                 <View style={styles.listData}>
                 {
-                    cauza instanceof CauzaAdapost?
+                    isCauzaAdapost(cauza) ?
                         <Text style={styles.name_age_race}>🏡 {cauza.nume}</Text> :
                     <>
                         <Text style={styles.name_age_race}>Name: {cauza.numeAnimal}</Text>
@@ -67,7 +67,7 @@ const CauzaPreview = ({cauza, user} : {cauza: Cauza, user: User}) => {
                 flexDirection: 'row',
                 justifyContent: 'space-between',
             }}>
-                {cauza instanceof CauzaPersonala ?
+                {isCauzaPersonala(cauza) ?
                     <AnimalTag animal={cauza.tagAnimal.nume}/> :
                     <AnimalsTag animals={cauza.taguri.map(tag => tag.nume)}/>
                 }

@@ -82,8 +82,16 @@ export class CauzaAdapost extends AbstractCauza implements Serializable<CauzaAda
     }
 }
 
+export const isCauzaAdapost = (cauza: Cauza): boolean => {
+    return cauza['taguri'] !== undefined && cauza['taguri'] !== null;
+}
+
+export const isCauzaPersonala = (cauza: Cauza): boolean => {
+    return !isCauzaAdapost(cauza);
+}
+
 export const deserializeCauza = (json: any): Cauza => {
-    if(json['tagAnimal']) {
+    if(isCauzaPersonala(json)) {
         return new CauzaPersonala().deserialize(json);
     } else {
         return new CauzaAdapost().deserialize(json);
