@@ -1,8 +1,9 @@
 import {User} from "./User";
 import {Serializable} from "./Deserialize";
 import {TagAnimal} from "./TagAnimal";
+import {Poza} from "./Poza";
 
-abstract class Cauza implements  Serializable<Cauza>{
+abstract class AbstractCauza implements  Serializable<AbstractCauza>{
     id: number = 0;
     user: User = new User();
     descriere: string = "";
@@ -10,31 +11,41 @@ abstract class Cauza implements  Serializable<Cauza>{
     locatie: string = "";
     sumaMinima: number = 0;
     sumaStransa: number = 0;
+    moneda: string = "RON";
+    nrSustinatori: number = 0;
+    poze: Poza[] = [];
 
     isCompleted() {
         return this.sumaMinima < this.sumaStransa;
     }
-    deserialize(json: any): Cauza {
-        let rez: Cauza = Object.assign(this, json);
+
+    deserialize(json: any): AbstractCauza {
+        let rez: AbstractCauza = Object.assign(this, json);
         rez.user = Object.assign(new User(), json['user']);
+        rez.poze = [];
+        for(let poza of json['poze']) {
+            rez.poze.push(new Poza().deserialize(poza));
+        }
         return rez;
     }
 
-    deserializeArray(json: any): Cauza[] {
+    deserializeArray(json: any): AbstractCauza[] {
         return json.map(this.deserialize);
     }
 }
 
-export class CauzaPersonala extends Cauza implements Serializable<CauzaPersonala> {
+export class CauzaPersonala extends AbstractCauza implements Serializable<CauzaPersonala> {
     tagAnimal: TagAnimal = new TagAnimal();
     numeAnimal: string = "";
     varstaAnimal: number = 0;
     rasaAnimal: string = "";
 
     deserialize(json: any): CauzaPersonala {
-        let rez: CauzaPersonala = Object.assign(this, json);
-        rez.user = Object.assign(new User(), json['user']);
-        rez.tagAnimal = Object.assign(new TagAnimal(), json['tagAnimal']);
+        let rez: CauzaPersonala = new CauzaPersonala().deserialize(json);
+        rez.tagAnimal = new TagAnimal().deserialize(json['tagAnimal']);
+        rez.numeAnimal = json['numeAnimal'];
+        rez.varstaAnimal = json['varstaAnimal'];
+        rez.rasaAnimal = json['rasaAnimal'];
         return rez;
     }
 
@@ -44,12 +55,17 @@ export class CauzaPersonala extends Cauza implements Serializable<CauzaPersonala
 
 }
 
-export class CauzaAdapost extends Cauza implements Serializable<CauzaAdapost> {
+export class CauzaAdapost extends AbstractCauza implements Serializable<CauzaAdapost> {
     nume: string = "";
+    taguri: TagAnimal[] = [];
 
     deserialize(json: any): CauzaAdapost {
-        let rez: CauzaAdapost = Object.assign(this, json);
-        rez.user = Object.assign(new User(), json['user']);
+        let rez: CauzaAdapost = new CauzaAdapost().deserialize(json);
+        rez.nume = json['nume'];
+        rez.taguri = [];
+        for(let tag of json['taguri']) {
+            rez.taguri.push(new TagAnimal().deserialize(tag));
+        }
         return rez;
     }
 
@@ -57,3 +73,5 @@ export class CauzaAdapost extends Cauza implements Serializable<CauzaAdapost> {
         return json.map(this.deserialize);
     }
 }
+
+export type Cauza = CauzaAdapost | CauzaPersonala;

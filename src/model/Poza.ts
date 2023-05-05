@@ -2,7 +2,6 @@ import {Serializable} from "./Deserialize";
 
 export class Poza implements Serializable<Poza>{
     id: number = 0;
-    idCauza: number = 0;
     url: string = "";
 
     deserialize(json: any): Poza {

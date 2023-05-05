@@ -35,8 +35,10 @@ const Login = ({ navigation }) => {
                 userLogin = response.data
                 console.log(response.data)
                 console.log(userLogin.interese)
+
+                setLoading(false);
+                navigation.navigate('Home', {user: userLogin});
             });
-            setLoading(false);
         }
     };
 

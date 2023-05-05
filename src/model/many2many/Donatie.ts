@@ -1,10 +1,11 @@
 import {Serializable} from "../Deserialize";
+import {Cauza, CauzaPersonala} from "../Cauza";
 
 export class Donatie implements Serializable<Donatie>{
     id: number = 0;
-    idUser: number = 0;
-    idCauza: number = 0;
+    cauza: Cauza = new CauzaPersonala();
     suma: number = 0;
+    moneda: string = "RON";
     data: Date = new Date();
 
     deserialize(json: any): Donatie {

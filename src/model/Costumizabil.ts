@@ -4,7 +4,7 @@ import {Tip} from "./Enums";
 export class Costumizabil implements Serializable<Costumizabil>{
     id: number = 0;
     tip: Tip = Tip.Item;
-    data: string = "";
+    url: string = "";
     costBani: number = 0;
     levelMin: number = 0;
 
