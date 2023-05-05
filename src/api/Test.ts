@@ -6,7 +6,7 @@ class Test {
     this.test1();
   }
   test1() {
-      axiosInstance.get('/users').then((response) => {
+      axiosInstance.get('/test').then((response) => {
         console.log(response.data);
       });
   }

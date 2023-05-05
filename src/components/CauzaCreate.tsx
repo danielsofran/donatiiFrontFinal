@@ -4,11 +4,8 @@ import { Picker } from '@react-native-picker/picker';
 import CustomCheckbox from "./small/CustomCheckbox";
 import Colors from "../utils/Colors";
 import Loader from "./small/Loader";
-import {CauzaAdapost, CauzaPersonala} from "../model/Cauza";
-import {Interes} from "../model/many2many/Interes";
 import {TagAnimal} from "../model/TagAnimal";
 import Animal from "../utils/AnimalTagsEmojies";
-import {Tag} from "native-base";
 import PicturePicker from "./small/PicturePicker";
 
 const CauzaCreate = (props) => {

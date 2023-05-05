@@ -4,11 +4,9 @@ import Colors from "../utils/Colors";
 import PictureNavigator from "./small/PictureNavigator";
 import Progress from "./small/Progress";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import Animal from "../utils/AnimalTagsEmojies";
 import {CauzaAdapost, CauzaPersonala} from "../model/Cauza";
 import HeartsStream from "./small/HeartsStream";
 import AnimalsTag from "./small/AnimalTag";
-import colors from "../utils/Colors";
 import {LinearGradient} from "expo-linear-gradient";
 
 

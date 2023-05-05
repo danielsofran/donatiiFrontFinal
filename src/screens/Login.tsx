@@ -4,6 +4,8 @@ import Colors from "../utils/Colors";
 import Register from "./Register";
 import Loader from "../components/small/Loader";
 import {isValidEmail} from "../utils/RegexEmail";
+import {axiosInstance} from "../api/axiosInstance";
+import {User} from "../model/User";
 const Login = ({ navigation }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -26,7 +28,15 @@ const Login = ({ navigation }) => {
         }
         else {
             setLoading(true);
-            //LOGIN
+            let userLogin = new User();
+            userLogin.email = email;
+            userLogin.parola = password;
+            axiosInstance.post('/user/login', userLogin).then((response) => {
+                userLogin = response.data
+                console.log(response.data)
+                console.log(userLogin.interese)
+            });
+            setLoading(false);
         }
     };
 
