@@ -4,7 +4,7 @@ import Colors from "../utils/Colors";
 import {CauzeList} from "../components/CauzeList";
 import {useEffect, useState} from "react";
 import {axiosInstance} from "../api/axiosInstance";
-import {Cauza} from "../model/Cauza";
+import {Cauza, deserializeCauzaArray} from "../model/Cauza";
 
 const Home = ({ navigation, route }) => {
     const user: User = route.params.user;
@@ -12,7 +12,9 @@ const Home = ({ navigation, route }) => {
 
     useEffect(() => {
         axiosInstance.get('/cauza/all').then((response) => {
-            setCauze(response.data);
+            let cauze: Cauza[] = deserializeCauzaArray(response.data);
+            console.log(cauze);
+            setCauze(cauze);
         })
     }, [])
 

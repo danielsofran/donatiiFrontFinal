@@ -3,7 +3,7 @@ import {Serializable} from "./Deserialize";
 import {TagAnimal} from "./TagAnimal";
 import {Poza} from "./Poza";
 
-abstract class AbstractCauza {
+class AbstractCauza implements Serializable<AbstractCauza> {
     id: number = 0;
     user: User = new User();
     descriere: string = "";
@@ -27,7 +27,7 @@ abstract class AbstractCauza {
         return rez;
     }
 
-    static deserialize(json: any): AbstractCauza {
+    deserialize(json: any): AbstractCauza {
         let rez: AbstractCauza = Object.assign(this, json);
         rez.user = Object.assign(new User(), json['user']);
         rez.poze = [];
@@ -37,8 +37,8 @@ abstract class AbstractCauza {
         return rez;
     }
 
-    static deserializeArray(json: any): AbstractCauza[] {
-        return json.map(AbstractCauza.deserialize);
+    deserializeArray(json: any): AbstractCauza[] {
+        return json.map(this.deserialize);
     }
 }
 
@@ -49,7 +49,7 @@ export class CauzaPersonala extends AbstractCauza implements Serializable<CauzaP
     rasaAnimal: string = "";
 
     deserialize(json: any): CauzaPersonala {
-        let rez: any = AbstractCauza.deserialize(json);
+        let rez: any = new AbstractCauza().deserialize(json);
         rez.tagAnimal = new TagAnimal().deserialize(json['tagAnimal']);
         rez.numeAnimal = json['numeAnimal'];
         rez.varstaAnimal = json['varstaAnimal'];
@@ -68,7 +68,7 @@ export class CauzaAdapost extends AbstractCauza implements Serializable<CauzaAda
     taguri: TagAnimal[] = [];
 
     deserialize(json: any): CauzaAdapost {
-        let rez: any = AbstractCauza.deserialize(json);
+        let rez: any = new AbstractCauza().deserialize(json);
         rez.nume = json['nume'];
         rez.taguri = [];
         for(let tag of json['taguri']) {
@@ -80,6 +80,18 @@ export class CauzaAdapost extends AbstractCauza implements Serializable<CauzaAda
     deserializeArray(json: any): CauzaAdapost[] {
         return json.map(this.deserialize);
     }
+}
+
+export const deserializeCauza = (json: any): Cauza => {
+    if(json['tagAnimal']) {
+        return new CauzaPersonala().deserialize(json);
+    } else {
+        return new CauzaAdapost().deserialize(json);
+    }
+}
+
+export const deserializeCauzaArray = (json: any): Cauza[] => {
+    return json.map(deserializeCauza);
 }
 
 export type Cauza = CauzaAdapost | CauzaPersonala;

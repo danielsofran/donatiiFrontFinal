@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import {View, Text, TextInput, TouchableOpacity, StyleSheet, Platform} from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import CustomCheckbox from "./small/CustomCheckbox";
 import Colors from "../utils/Colors";
@@ -186,7 +186,8 @@ const styles = StyleSheet.create({
     },
     container: {
         margin: 20,
-        marginBottom: 0
+        marginBottom: 0,
+        marginHorizontal: Platform.OS === 'web' ? '22%' : 10,
     },
     label: {
         fontSize: 16,

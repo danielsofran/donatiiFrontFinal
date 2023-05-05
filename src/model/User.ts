@@ -3,7 +3,7 @@ import {Serializable} from "./Deserialize";
 import {TagAnimal} from "./TagAnimal";
 import {Costumizabil} from "./Costumizabil";
 import {Donatie} from "./many2many/Donatie";
-import {Cauza, CauzaAdapost, CauzaPersonala} from "./Cauza";
+import {Cauza, CauzaAdapost, CauzaPersonala, deserializeCauzaArray} from "./Cauza";
 
 export class User implements Serializable<User>{
     id: number = 0;
@@ -28,14 +28,7 @@ export class User implements Serializable<User>{
         rez.costumizabile = json.costumizabile.map((item: any) => new Costumizabil().deserialize(item));
         rez.sustineri = json.sustineri.map((item: any) => item);
         rez.donatii = json.donatii.map((item: any) => new Donatie().deserialize(item));
-        rez.cauze = json.cauze.map((item: any) => {
-            if('varstaAnimal' in item) {
-                return new CauzaPersonala().deserialize(item);
-            }
-            else {
-                return new CauzaAdapost().deserialize(item);
-            }
-        });
+        rez.cauze = deserializeCauzaArray(json.cauze);
         return rez;
     }
 
