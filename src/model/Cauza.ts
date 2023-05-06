@@ -5,7 +5,6 @@ import {Poza} from "./Poza";
 
 class AbstractCauza implements Serializable<AbstractCauza> {
     id: number = 0;
-    user: User = new User();
     descriere: string = "";
     titlu: string = "";
     locatie: string = "";
@@ -29,7 +28,6 @@ class AbstractCauza implements Serializable<AbstractCauza> {
 
     deserialize(json: any): AbstractCauza {
         let rez: AbstractCauza = Object.assign(this, json);
-        rez.user = Object.assign(new User(), json['user']);
         rez.poze = [];
         for(let poza of json['poze']) {
             rez.poze.push(new Poza().deserialize(poza));

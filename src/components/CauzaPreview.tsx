@@ -9,15 +9,28 @@ import HeartsStream from "./small/HeartsStream";
 import {AnimalsTag, AnimalTag} from "./small/AnimalTag";
 import {LinearGradient} from "expo-linear-gradient";
 import {User} from "../model/User";
+import {axiosInstance} from "../api/axiosInstance";
 
 
 const CauzaPreview = ({cauza, user} : {cauza: Cauza, user: User}) => {
 
-    const [liked, setLiked] = useState(cauza.id in user.cauze);
+    const [liked, setLiked] = useState(user.sustineri.includes(cauza.id));
 
     function handleLike() {
         setLiked(!liked);
-        //SUSTINERE API
+        axiosInstance.put(`/user/like/${user.id}/${cauza.id}`).then((response) => {
+            console.log(response.data)
+            if(!liked) {
+                cauza.nrSustinatori--;
+                user.sustineri = user.sustineri.filter((id) => id !== cauza.id);
+            }
+            else {
+                cauza.nrSustinatori++;
+                user.sustineri.push(cauza.id);
+            }
+        }).catch(error => {
+            console.log(error.response.data)
+        });
     }
 
     return (
