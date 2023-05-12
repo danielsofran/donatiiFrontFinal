@@ -46,6 +46,7 @@ const AnotherComponent = () => {
     user.coins = 1000
     user.gender = GenderType.Male
     user.interese = [tagCaine, tagPisica]
+    user.sustineri = []
 
     return (
         // <ScrollView>

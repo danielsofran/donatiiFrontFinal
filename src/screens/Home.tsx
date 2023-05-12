@@ -5,9 +5,10 @@ import {CauzeList} from "../components/CauzeList";
 import {useEffect, useState} from "react";
 import {axiosInstance} from "../api/axiosInstance";
 import {Cauza, deserializeCauzaArray} from "../model/Cauza";
+import WebNavbar from "../components/navbar/Web";
 
 const Home = ({ navigation, route }) => {
-    const user: User = route.params.user;
+    const user: User = route.params?.user === undefined ? new User() : route.params.user
     const [cauze, setCauze] = useState<Cauza[]>([]);
 
     useEffect(() => {
@@ -19,7 +20,9 @@ const Home = ({ navigation, route }) => {
     }, [])
 
     return (
-        <CauzeList cauze={cauze} user={user}/>
+        <WebNavbar navigation={navigation}>
+            <CauzeList cauze={cauze} user={user}/>
+        </WebNavbar>
     );
 }
 

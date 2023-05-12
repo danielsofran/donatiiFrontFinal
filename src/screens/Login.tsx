@@ -12,6 +12,10 @@ const Login = ({ navigation }) => {
     const [loading, setLoading] = useState(false);
     const [errortext, setErrortext] = useState('');
 
+    const hideDog = () => {
+        setTimeout(() => setLoading(false), 0)
+    }
+
     const handleLogin = () => {
         setErrortext('');
         if (!email && !password) {
@@ -31,13 +35,19 @@ const Login = ({ navigation }) => {
             let userLogin = new User();
             userLogin.email = email;
             userLogin.parola = password;
-            axiosInstance.post('/user/login', userLogin).then((response) => {
+            axiosInstance.post('/user/login', userLogin)
+                .then((response) => {
                 userLogin = new User().deserialize(response.data)
                 console.log(response.data)
                 console.log(userLogin)
 
-                setLoading(false);
+                hideDog()
                 navigation.navigate('Home', {user: userLogin});
+            }).catch(error => {
+                if(error.response.status === 400) {
+                    setErrortext(error.response.data)
+                    hideDog()
+                }
             });
         }
     };
@@ -79,6 +89,7 @@ const Login = ({ navigation }) => {
         </View>
     );
 };
+
 
 const styles = StyleSheet.create({
     container: {

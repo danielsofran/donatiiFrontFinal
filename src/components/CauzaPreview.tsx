@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useRef, useState} from 'react';
 import {View, Text, StyleSheet, TouchableOpacity, Platform} from 'react-native';
 import Colors from "../utils/Colors";
 import PictureNavigator from "./small/PictureNavigator";
@@ -15,17 +15,18 @@ import {axiosInstance} from "../api/axiosInstance";
 const CauzaPreview = ({cauza, user} : {cauza: Cauza, user: User}) => {
 
     const [liked, setLiked] = useState(user.sustineri.includes(cauza.id));
+    const [nrLikes, setNrLikes] = useState(cauza.nrSustinatori)
 
     function handleLike() {
         setLiked(!liked);
         axiosInstance.put(`/user/like/${user.id}/${cauza.id}`).then((response) => {
             console.log(response.data)
-            if(!liked) {
-                cauza.nrSustinatori--;
+            if(!!liked) {
+                setNrLikes(nrLikes-1);
                 user.sustineri = user.sustineri.filter((id) => id !== cauza.id);
             }
             else {
-                cauza.nrSustinatori++;
+                setNrLikes(nrLikes+1)
                 user.sustineri.push(cauza.id);
             }
         }).catch(error => {
@@ -86,7 +87,7 @@ const CauzaPreview = ({cauza, user} : {cauza: Cauza, user: User}) => {
                 }
                 <View style={{flexDirection: 'row', alignItems: 'center'}}>
                     <Text style={{fontSize: 12, paddingRight: 2, paddingBottom: 0}}>
-                        {cauza.nrSustinatori}
+                        {nrLikes}
                     </Text>
                     <TouchableOpacity style={styles.like} onPress={handleLike}>
                         <MaterialCommunityIcons name={liked ? 'heart' : 'heart-outline'} size={30} color={liked ? 'red' : 'gray'} />
@@ -141,6 +142,7 @@ const styles = StyleSheet.create({
         fontSize: 20,
         paddingBottom: 10,
         paddingTop: 10,
+        paddingHorizontal: 7,
         fontWeight: 'bold',
         //borderBottomStyle: 'solid',
     },
