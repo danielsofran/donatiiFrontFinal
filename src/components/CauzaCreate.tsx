@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useContext, useEffect, useRef, useState} from 'react';
 import {View, Text, TextInput, TouchableOpacity, StyleSheet, Platform} from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import CustomCheckbox from "./small/CustomCheckbox";
@@ -8,8 +8,12 @@ import {TagAnimal} from "../model/TagAnimal";
 import Animal from "../utils/AnimalTagsEmojies";
 import PicturePicker from "./small/PicturePicker";
 import { AnimalTag } from "./small/AnimalTag";
+import {axiosInstance} from "../api/axiosInstance";
+import {CauzaAdapost, CauzaPersonala} from "../model/Cauza";
+import {User} from "../model/User";
+import {useAuth} from "../utils/UseAuth";
 
-const CauzaCreate = (props) => {
+const CauzaCreate = ({navigator}) => {
     const [title, setTitle] = useState("");
     const [location, setLocation] = useState("");
     const [description, setDescription] = useState("");
@@ -18,6 +22,7 @@ const CauzaCreate = (props) => {
     const [tipCauza, setTipCauza] = useState("personal case");
     const [tags, setTags] = useState<TagAnimal[]>([]);
     const [images, setImages] = useState([]);
+    const [interests, setInterests] = useState([]);
 
     const [name, setName] = useState("");
     const [age, setAge] = useState(0);
@@ -27,19 +32,23 @@ const CauzaCreate = (props) => {
     const [errortext, setErrortext] = useState('');
 
 
-    useEffect(() => {
+    // @ts-ignore
+    const { userRef } = useAuth();
 
-        let tag = new TagAnimal()
-        tag.id = 0
-        tag.nume='Dogs';
-        let tag2 = new TagAnimal()
-        tag2.id = 1
-        tag2.nume='Cats';
-        setTags([tag, tag2]);
-        // Fetch for tags
+
+    useEffect(() => {
+        axiosInstance.get('/tags').then((response) => {
+            setTags(new TagAnimal().deserializeArray(response.data));
+        }).catch(error => {
+            console.log(error.response.data)
+        });
     },[])
-    const handleInterestChange = (interest) => {
-        //SCHIMBARE INTERESE
+    const handleInterestChange = (interes) => {
+        if (interests.includes(interes)) {
+            setInterests(interests.filter(item => item !== interes));
+        } else {
+            interests.push(interes);
+        }
     };
 
     const handlePicturesChange = (newPictures) => {
@@ -64,7 +73,61 @@ const CauzaCreate = (props) => {
         }
         else {
             setLoading(true);
-            // PROFILE UPDATE
+            let cauza;
+            if(tipCauza === 'personal case') {
+                cauza = new CauzaPersonala();
+                cauza.descriere = description;
+                cauza.titlu = title;
+                cauza.locatie = location;
+                cauza.sumaMinima = sumTarget;
+                cauza.sumaStransa = 0;
+                cauza.moneda = 'RON';
+                cauza.tagAnimal = interests[0];
+                cauza.numeAnimal = name;
+                cauza.varstaAnimal = age;
+                cauza.rasaAnimal = race;
+                cauza.poze = images;
+            }
+            else if(tipCauza === 'shelter case') {
+                cauza = new CauzaAdapost();
+                cauza.descriere = description;
+                cauza.titlu = title;
+                cauza.locatie = location;
+                cauza.sumaMinima = sumTarget;
+                cauza.sumaStransa = 0;
+                cauza.moneda = 'RON';
+                cauza.nume = name;
+                cauza.taguri = interests;
+                cauza.poze = images;
+            }
+            console.log(userRef.current);
+            console.log(JSON.stringify({ type: cauza.type === 'CauzaAdapost' ? 'adapost': 'personala', ...cauza }));
+            axiosInstance.post('/cauza/' + userRef.current.id, cauza)
+                .then((response) => {
+
+                console.log('Cauza adaugata cu succes');
+                cauza.id = response.data.id;
+                const formData = new FormData();
+                Promise.all(
+                    images.map(image =>
+                        fetch(image.imageUri)
+                            .then(response => response.blob())
+                            .then(blob => formData.append('pictures', blob, `${Date.now()}_${Math.random().toString(36).substring(2)}.jpg`))
+                    )
+                ).then(() => {
+                    console.log(formData);
+                    /*
+                    axiosInstance.post('/cauza/saveImages/' + response.data.id, images).then((response) => {
+                    }).catch(error => {
+                        console.log(error.response.data)
+                    })
+                     */
+                });
+                //CAUZA CREATA
+            }).catch(error => {
+                console.log(error.response.data)
+            });
+            setLoading(false);
         }
     };
 

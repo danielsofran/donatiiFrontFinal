@@ -1,4 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
+import React from 'react';
 import {Platform, StyleSheet, Text, View} from 'react-native';
 import 'react-native-gesture-handler';
 import {createStackNavigator} from "@react-navigation/stack";
@@ -11,20 +12,23 @@ import Home from "./src/screens/Home";
 import CauzaCreate from "./src/components/CauzaCreate";
 import TestCauzaPreview from "./src/xtest/TestCauzaPreview";
 import ProfileConfig from "./src/components/ProfileConfig";
+import {UserProvider} from "./src/utils/UserContext";
 
 const Stack = createStackNavigator();
 
 export default function App() {
    return (
-         <NavigationContainer>
-            <Stack.Navigator>
-                {/*<Stack.Screen name={"Test"} component={TestCauzaPreview} options={{headerShown: false}}/>*/}
-                <Stack.Screen name="Login" component={Login} options={{headerShown: false}}/>
-                <Stack.Screen name="Register" component={Register} options={{headerShown: false}}/>
-                <Stack.Screen name="Home" component={Home} options={{headerShown: false}}/>
-                <Stack.Screen name="Adauga" component={CauzaCreate}/>
-            </Stack.Navigator>
-        </NavigationContainer>
+           <NavigationContainer>
+               <UserProvider>
+                    <Stack.Navigator>
+                        {/*<Stack.Screen name={"Test"} component={TestCauzaPreview} options={{headerShown: false}}/>*/}
+                        <Stack.Screen name="Login" component={Login} options={{headerShown: false}}/>
+                        <Stack.Screen name="Register" component={Register} options={{headerShown: false}}/>
+                        <Stack.Screen name="Home" component={Home} options={{headerShown: false}}/>
+                        <Stack.Screen name="Adauga" component={CauzaCreate}/>
+                    </Stack.Navigator>
+                </UserProvider>
+           </NavigationContainer>
     );
 }
 

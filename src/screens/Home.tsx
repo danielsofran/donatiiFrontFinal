@@ -6,13 +6,17 @@ import {useEffect, useState} from "react";
 import {axiosInstance} from "../api/axiosInstance";
 import {Cauza, deserializeCauzaArray} from "../model/Cauza";
 import WebNavbar from "../components/navbar/Web";
+import {useAuth} from "../utils/UseAuth";
 
 const Home = ({ navigation, route }) => {
-    const user: User = route.params?.user === undefined ? new User() : route.params.user
+    //const user: User = route.params?.user === undefined ? new User() : route.params.user
     const [cauze, setCauze] = useState<Cauza[]>([]);
 
+    // @ts-ignore
+    const { userRef } = useAuth();
+
     useEffect(() => {
-        axiosInstance.get('/cauza/all').then((response) => {
+        axiosInstance.get('/cauza').then((response) => {
             let cauze: Cauza[] = deserializeCauzaArray(response.data);
             console.log(cauze);
             setCauze(cauze);
@@ -21,7 +25,7 @@ const Home = ({ navigation, route }) => {
 
     return (
         <WebNavbar navigation={navigation}>
-            <CauzeList cauze={cauze} user={user}/>
+            <CauzeList cauze={cauze} user={userRef.current}/>
         </WebNavbar>
     );
 }

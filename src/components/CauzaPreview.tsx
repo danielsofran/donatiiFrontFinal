@@ -22,7 +22,7 @@ const CauzaPreview = ({cauza, user} : {cauza: Cauza, user: User}) => {
         axiosInstance.put(`/user/like/${user.id}/${cauza.id}`).then((response) => {
             console.log(response.data)
             if(!!liked) {
-                setNrLikes(nrLikes-1);
+                    setNrLikes(nrLikes-1);
                 user.sustineri = user.sustineri.filter((id) => id !== cauza.id);
             }
             else {

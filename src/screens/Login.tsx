@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import Colors from "../utils/Colors";
 import Register from "./Register";
@@ -6,11 +6,16 @@ import Loader from "../components/small/Loader";
 import {isValidEmail} from "../utils/RegexEmail";
 import {axiosInstance} from "../api/axiosInstance";
 import {User} from "../model/User";
+import {useAuth} from "../utils/UseAuth";
+import {UserContext} from "../utils/UserContext";
 const Login = ({ navigation }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
     const [errortext, setErrortext] = useState('');
+
+    // @ts-ignore
+    const { userRef } = useContext(UserContext);
 
     const hideDog = () => {
         setTimeout(() => setLoading(false), 0)
@@ -41,13 +46,15 @@ const Login = ({ navigation }) => {
                 console.log(response.data)
                 console.log(userLogin)
 
-                hideDog()
-                navigation.navigate('Home', {user: userLogin});
+                hideDog();
+                userRef.current = userLogin;
+                navigation.navigate('Home');
             }).catch(error => {
-                if(error.response.status === 400) {
+                console.log(error)
+                //if(error.response.status === 400) {
                     setErrortext(error.response.data)
                     hideDog()
-                }
+                //}
             });
         }
     };
