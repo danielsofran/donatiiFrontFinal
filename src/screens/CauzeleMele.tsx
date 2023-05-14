@@ -9,24 +9,14 @@ import WebNavbar from "../components/navbar/Web";
 import {useAuth} from "../utils/UseAuth";
 import {Banner} from "../components/small/Banner";
 
-const Home = ({ navigation}) => {
-    const [cauze, setCauze] = useState<Cauza[]>([]);
+const CauzeleMele = ({ navigation }) => {
 
     // @ts-ignore
     const { userRef } = useAuth();
 
-    useEffect(() => {
-        axiosInstance.get('/cauza').then((response) => {
-            let cauze: Cauza[] = deserializeCauzaArray(response.data);
-            console.log(cauze);
-            setCauze(cauze);
-        })
-    }, [])
-
     return (
         <WebNavbar navigation={navigation}>
-            <Banner></Banner>
-            <CauzeList cauze={cauze} user={userRef.current}/>
+            <CauzeList cauze={userRef.current.cauze} user={userRef.current}/>
         </WebNavbar>
     );
 }
@@ -50,4 +40,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default Home;
+export default CauzeleMele;

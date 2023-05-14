@@ -1,24 +1,54 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
-import CustomCheckbox from "./small/CustomCheckbox";
+import CustomCheckbox from "../components/small/CustomCheckbox";
 import Colors from "../utils/Colors";
-import Loader from "./small/Loader";
+import Loader from "../components/small/Loader";
 import Animal from "../utils/AnimalTagsEmojies";
 import {isValidEmail} from "../utils/RegexEmail";
+import {useAuth} from "../utils/UseAuth";
+import {axiosInstance} from "../api/axiosInstance";
+import {TagAnimal} from "../model/TagAnimal";
+import {AnimalTag} from "../components/small/AnimalTag";
+import WebNavbar from "../components/navbar/Web";
 
-const ProfileConfig = ({user, interests}) => {
-    const [username, setUsername] = useState(user.username);
-    const [password, setPassword] = useState(user.parola);
-    const [email, setEmail] = useState(user.email);
-    const [fullname, setFullname] = useState(user.fullName);
-    const [gender, setGender] = useState(user.gender);
+const ProfileConfig = ({ navigation }) => {
+    const [username, setUsername] = useState("");
+    const [password, setPassword] = useState("");
+    const [email, setEmail] = useState("");
+    const [fullname, setFullname] = useState("");
+    const [gender, setGender] = useState();
+    const [interests, setInterests] = useState([]);
 
+    const [tags, setTags] = useState<TagAnimal[]>([]);
     const [loading, setLoading] = useState(false);
     const [errortext, setErrortext] = useState('');
+    const [errorColor, setErrorColor] = useState('red');
 
-    const handleInterestChange = (interest) => {
-        //SCHIMBARE INTERESE
+    // @ts-ignore
+    const { userRef } = useAuth();
+
+
+    useEffect(() => {
+        setUsername(userRef.current.username);
+        setPassword(userRef.current.parola);
+        setEmail(userRef.current.email);
+        setFullname(userRef.current.fullName);
+        setGender(userRef.current.gender);
+        setInterests(userRef.current.interese);
+        axiosInstance.get('/tags').then((response) => {
+            setTags(new TagAnimal().deserializeArray(response.data));
+        }).catch(error => {
+            console.log(error.response.data)
+        });
+    },[])
+
+    const handleInterestChange = (interes) => {
+        if (interests.includes(interes)) {
+            setInterests(interests.filter(item => item !== interes));
+        } else {
+            interests.push(interes);
+        }
     };
 
     const handleSave = () => {
@@ -26,7 +56,7 @@ const ProfileConfig = ({user, interests}) => {
             setErrortext('Please fill username');
         }
         else if (!password) {
-            setErrortext(' Please fill password');
+            setErrortext('Please fill password');
         }
         else if (!email) {
             setErrortext('Please fill email');
@@ -35,26 +65,36 @@ const ProfileConfig = ({user, interests}) => {
             setErrortext('Email is not valid');
         }
         else if (!fullname) {
-            setErrortext(' Please fill full name');
+            setErrorColor('red');
+            setErrortext('Please fill full name');
         }
         else {
             setLoading(true);
-            // PROFILE UPDATE
+            userRef.current.username = username;
+            userRef.current.parola = password;
+            userRef.current.email = email;
+            userRef.current.fullName = fullname;
+            userRef.current.gender = gender;
+            userRef.current.interese = interests;
+            axiosInstance.put('/user/' + userRef.current.id, userRef.current).then((response) => {
+                setLoading(false);
+                setErrorColor('blue');
+                setErrortext('Profile updated successfully');
+            }).catch(error => {
+                console.log(error.response.data);
+            });
+            setLoading(false);
         }
     };
 
     return (
+        <WebNavbar navigation={navigation}>
         <View style={styles.background}>
             <Loader loading={loading} />
             <View style={styles.container}>
                 <View style={styles.row}>
                     <Text style={styles.label}>Username:</Text>
                     <TextInput style={styles.input} value={username} onChangeText={setUsername} />
-                </View>
-
-                <View style={styles.row}>
-                    <Text style={styles.label}>Password:</Text>
-                    <TextInput style={styles.input} secureTextEntry value={password} onChangeText={setPassword} />
                 </View>
 
                 <View style={styles.row}>
@@ -83,10 +123,12 @@ const ProfileConfig = ({user, interests}) => {
                 <View style={styles.row}>
                     <Text style={styles.label}>Interests:</Text>
 
-                    {interests.map((interest) => (
-                        <View key={interest.id} style={styles.checkboxContainer}>
-                            <CustomCheckbox value={interest.value}
-                                            onValueChange={() => handleInterestChange(interest.nume)} label={interest.nume + ' ' + Animal[interest.nume]} />
+                    {tags.map((tag) => (
+                        <View key={tag.id} style={styles.checkboxContainer}>
+                            <CustomCheckbox value={interests.includes(tag)}
+                                            onValueChange={() => handleInterestChange(tag)}
+                                            label={""} />
+                            <AnimalTag animal={tag.nume} />
                         </View>
                     ))}
                 </View>
@@ -97,11 +139,17 @@ const ProfileConfig = ({user, interests}) => {
 
             </View>
             <View style={styles.errorContainer}>
-                <Text style={styles.errorText}>
+                <Text style={{
+                    marginTop: 20,
+                    fontSize: 16,
+                    color: errorColor,
+                    fontWeight: 'bold',
+                }}>
                     {errortext}
                 </Text>
             </View>
         </View>
+        </WebNavbar>
     );
 };
 
@@ -160,12 +208,6 @@ const styles = StyleSheet.create({
     errorContainer: {
         height: 40,
         alignItems: "center"
-    },
-    errorText: {
-        marginTop: 20,
-        fontSize: 16,
-        color: Colors.Red,
-        fontWeight: 'bold',
     },
 
 });

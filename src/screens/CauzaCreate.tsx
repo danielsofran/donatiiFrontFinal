@@ -1,19 +1,20 @@
 import React, {useContext, useEffect, useRef, useState} from 'react';
 import {View, Text, TextInput, TouchableOpacity, StyleSheet, Platform} from 'react-native';
 import { Picker } from '@react-native-picker/picker';
-import CustomCheckbox from "./small/CustomCheckbox";
+import CustomCheckbox from "../components/small/CustomCheckbox";
 import Colors from "../utils/Colors";
-import Loader from "./small/Loader";
+import Loader from "../components/small/Loader";
 import {TagAnimal} from "../model/TagAnimal";
 import Animal from "../utils/AnimalTagsEmojies";
-import PicturePicker from "./small/PicturePicker";
-import { AnimalTag } from "./small/AnimalTag";
+import PicturePicker from "../components/small/PicturePicker";
+import { AnimalTag } from "../components/small/AnimalTag";
 import {axiosInstance} from "../api/axiosInstance";
 import {CauzaAdapost, CauzaPersonala} from "../model/Cauza";
 import {User} from "../model/User";
 import {useAuth} from "../utils/UseAuth";
+import WebNavbar from '../components/navbar/Web';
 
-const CauzaCreate = ({navigator}) => {
+const CauzaCreate = ({ navigation }) => {
     const [title, setTitle] = useState("");
     const [location, setLocation] = useState("");
     const [description, setDescription] = useState("");
@@ -109,19 +110,24 @@ const CauzaCreate = ({navigator}) => {
                 cauza.id = response.data.id;
                 const formData = new FormData();
                 Promise.all(
-                    images.map(image =>
+                    images.map((image, index) =>
                         fetch(image.imageUri)
                             .then(response => response.blob())
-                            .then(blob => formData.append('pictures', blob, `${Date.now()}_${Math.random().toString(36).substring(2)}.jpg`))
+                            .then(blob => formData.append(`picture${index}`, blob, `${Date.now()}_${Math.random().toString(36).substring(2)}.jpg`))
                     )
                 ).then(() => {
-                    console.log(formData);
+
+                    const xhr = new XMLHttpRequest();
+                    xhr.open('POST', 'http://localhost:8080/cauza/saveImages/' + cauza.id);
+                    xhr.setRequestHeader('Content-Type', 'multipart/form-data');
+                    xhr.send(formData);
                     /*
                     axiosInstance.post('/cauza/saveImages/' + response.data.id, images).then((response) => {
                     }).catch(error => {
                         console.log(error.response.data)
                     })
-                     */
+                    */
+
                 });
                 //CAUZA CREATA
             }).catch(error => {
@@ -155,6 +161,7 @@ const CauzaCreate = ({navigator}) => {
         </>
 
     return (
+        <WebNavbar navigation={navigation}>
         <View style={styles.background}>
             <Loader loading={loading} />
             <View style={styles.container}>
@@ -239,6 +246,7 @@ const CauzaCreate = ({navigator}) => {
                 </Text>
             </View>
         </View>
+        </WebNavbar>
     );
 };
 

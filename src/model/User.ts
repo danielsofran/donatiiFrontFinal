@@ -12,14 +12,14 @@ export class User implements Serializable<User>{
     parola: string = "";
     fullName: string = "";
     gender: GenderType = GenderType.Confidential;
-    coins: number;
-    level: number;
+    coins: number = 0;
+    level: number = 0;
 
-    interese: TagAnimal[];
-    costumizabile: Costumizabil[];
-    sustineri: number[]; // lista id-urilor cauzelor sustinute de user-ul curent
-    donatii: Donatie[]; // lista de donatii facute de user-ul curent
-    cauze: Cauza[]; // lista id-urilor cauzelor create de user-ul curent
+    interese: TagAnimal[] = [];
+    costumizabile: Costumizabil[] = [];
+    sustineri: number[] = []; // lista id-urilor cauzelor sustinute de user-ul curent
+    donatii: Donatie[] = []; // lista de donatii facute de user-ul curent
+    cauze: Cauza[] = []; // lista id-urilor cauzelor create de user-ul curent
 
     deserialize(json: any): User {
         // WARNING: may fail if there is an empty array as CauzaPersonala, and a new lis

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Text, View } from 'react-native';
 import {User} from "../model/User";
-import ProfileConfig from "../components/ProfileConfig";
+import ProfileConfig from "../screens/ProfileConfig";
 import {TagAnimal} from "../model/TagAnimal";
 
 function MyComponent() {

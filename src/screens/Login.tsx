@@ -21,6 +21,28 @@ const Login = ({ navigation }) => {
         setTimeout(() => setLoading(false), 0)
     }
 
+    useEffect(() => {
+        if (localStorage.getItem(`userRef`) != '') {
+            let userLogin = new User();
+            let user = JSON.parse(localStorage.getItem(`userRef`));
+            userLogin.email = user.email;
+            userLogin.parola = user.parola;
+            axiosInstance.post('/user/login', userLogin)
+                .then((response) => {
+                    userLogin = new User().deserialize(response.data)
+                    console.log(response.data)
+                    console.log(userLogin)
+
+                    userRef.current = userLogin;
+                    navigation.navigate('Home');
+                }).catch(error => {
+                console.log(error)
+                setErrortext(error.response.data)
+            });
+            navigation.navigate('Home');
+        }
+    });
+
     const handleLogin = () => {
         setErrortext('');
         if (!email && !password) {
@@ -48,6 +70,7 @@ const Login = ({ navigation }) => {
 
                 hideDog();
                 userRef.current = userLogin;
+                localStorage.setItem(`userRef`, JSON.stringify({email: userLogin.email, parola: userLogin.parola}));
                 navigation.navigate('Home');
             }).catch(error => {
                 console.log(error)

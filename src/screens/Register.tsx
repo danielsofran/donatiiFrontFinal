@@ -1,9 +1,12 @@
-import React, { useState } from 'react';
+import React, {useContext, useState} from 'react';
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import Colors from "../utils/Colors";
 import Login from "./Login";
 import Loader from "../components/small/Loader";
 import {isValidEmail} from "../utils/RegexEmail";
+import {User} from "../model/User";
+import {axiosInstance} from "../api/axiosInstance";
+import { UserContext } from '../utils/UserContext';
 
 const Register = ({ navigation }) => {
     const [username, setUsername] = useState('');
@@ -12,6 +15,12 @@ const Register = ({ navigation }) => {
     const [loading, setLoading] = useState(false);
     const [errortext, setErrortext] = useState('');
 
+    // @ts-ignore
+    const { userRef } = useContext(UserContext);
+
+    const hideDog = () => {
+        setTimeout(() => setLoading(false), 0)
+    }
 
     const handleRegister = () => {
         if (!username) {
@@ -28,7 +37,26 @@ const Register = ({ navigation }) => {
         }
         else {
             setLoading(true);
-            // REGISTER
+            let userRegister = new User();
+            userRegister.username = username;
+            userRegister.email = email;
+            userRegister.parola = password;
+            axiosInstance.post('/user/register', userRegister)
+                .then((response) => {
+                    console.log(response.data)
+                    console.log(userRegister)
+
+                    hideDog();
+                    userRef.current = userRegister;
+                    localStorage.setItem(`userRef`, JSON.stringify(userRegister));
+                    navigation.navigate('Home');
+                }).catch(error => {
+                console.log(error)
+                //if(error.response.status === 400) {
+                setErrortext(error.response.data)
+                hideDog()
+                //}
+            });
         }
     };
 
