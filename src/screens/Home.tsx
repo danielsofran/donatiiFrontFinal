@@ -25,7 +25,7 @@ const Home = ({ navigation}) => {
 
     return (
         <WebNavbar navigation={navigation}>
-            <Banner></Banner>
+            <Banner active={true/*!(localStorage.getItem(`mesaje${userRef.current.id}`) === 'false')*/}></Banner>
             <CauzeList cauze={cauze} user={userRef.current}/>
         </WebNavbar>
     );

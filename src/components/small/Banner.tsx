@@ -23,8 +23,8 @@ const messages =
     'Together, we can make a difference in the world and help ensure that all animals are treated with compassion, kindness, and respect. Thank you for considering a donation to support this important cause.',
     ];
 
-export const Banner = () => {
-    const [visible, setVisible] = useState(true);
+export const Banner = ({active}) => {
+    const [visible, setVisible] = useState(active);
     const opacity = useRef(new Animated.Value(0)).current;
     const translateX = useRef(new Animated.Value(-100)).current;
     const color = useRef(new Animated.Value(0)).current;

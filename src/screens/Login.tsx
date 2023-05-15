@@ -8,14 +8,21 @@ import {axiosInstance} from "../api/axiosInstance";
 import {User} from "../model/User";
 import {useAuth} from "../utils/UseAuth";
 import {UserContext} from "../utils/UserContext";
+import { Checkbox, Text as PaperText } from 'react-native-paper';
 const Login = ({ navigation }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
     const [errortext, setErrortext] = useState('');
 
+    const [checked, setChecked] = useState(false);
+
     // @ts-ignore
     const { userRef } = useContext(UserContext);
+
+    const handleCheckboxToggle = () => {
+        setChecked(!checked);
+    };
 
     const hideDog = () => {
         setTimeout(() => setLoading(false), 0)
@@ -70,7 +77,8 @@ const Login = ({ navigation }) => {
 
                 hideDog();
                 userRef.current = userLogin;
-                localStorage.setItem(`userRef`, JSON.stringify({email: userLogin.email, parola: userLogin.parola}));
+                if(checked)
+                    localStorage.setItem(`userRef`, JSON.stringify({email: userLogin.email, parola: userLogin.parola}));
                 navigation.navigate('Home');
             }).catch(error => {
                 console.log(error)
@@ -107,6 +115,16 @@ const Login = ({ navigation }) => {
             <TouchableOpacity style={styles.button} onPress={handleLogin}>
                 <Text style={styles.buttonText}>Login</Text>
             </TouchableOpacity>
+            <View style={{ flexDirection: 'row', alignItems: 'center', paddingTop: 10, }}>
+                <Checkbox
+                    status={checked ? 'checked' : 'unchecked'}
+                    onPress={handleCheckboxToggle}
+                    color={Colors.Blue} // Customize the checkbox color
+                />
+                <TouchableOpacity onPress={handleCheckboxToggle}>
+                    <PaperText style={{ color: Colors.Blue }}>Keep me logged in</PaperText>
+                </TouchableOpacity>
+            </View>
             <Text style={styles.createAccountText}>
                 Don't have an account?{' '}
                 <Text style={styles.createAccountLink} onPress={handleCreate} selectable={false}>Create one</Text>

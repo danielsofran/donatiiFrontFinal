@@ -48,7 +48,7 @@ const Register = ({ navigation }) => {
 
                     hideDog();
                     userRef.current = userRegister;
-                    localStorage.setItem(`userRef`, JSON.stringify(userRegister));
+                    //localStorage.setItem(`userRef`, JSON.stringify({email: userRegister.email, parola: userRegister.parola}));
                     navigation.navigate('Home');
                 }).catch(error => {
                 console.log(error)
