@@ -48,7 +48,7 @@ const Login = ({ navigation }) => {
             });
             navigation.navigate('Home');
         }
-    });
+    }, []);
 
     const handleLogin = () => {
         setErrortext('');
