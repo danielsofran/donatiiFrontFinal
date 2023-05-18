@@ -3,7 +3,7 @@ import {Serializable} from "./Deserialize";
 import {TagAnimal} from "./TagAnimal";
 import {Costumizabil} from "./Costumizabil";
 import {Donatie} from "./many2many/Donatie";
-import {Cauza, CauzaAdapost, CauzaPersonala, deserializeCauzaArray} from "./Cauza";
+import {Cauza, deserializeCauzaArray} from "./Cauza";
 
 export class User implements Serializable<User>{
     id: number = 0;
@@ -17,6 +17,7 @@ export class User implements Serializable<User>{
 
     interese: TagAnimal[] = [];
     costumizabile: Costumizabil[] = [];
+    echipate: Costumizabil[] = [];
     sustineri: number[] = []; // lista id-urilor cauzelor sustinute de user-ul curent
     donatii: Donatie[] = []; // lista de donatii facute de user-ul curent
     cauze: Cauza[] = []; // lista id-urilor cauzelor create de user-ul curent
@@ -26,6 +27,7 @@ export class User implements Serializable<User>{
         let rez: User = Object.assign(new User(), json);
         rez.interese = json.interese.map((item: any) => new TagAnimal().deserialize(item));
         rez.costumizabile = json.costumizabile.map((item: any) => new Costumizabil().deserialize(item));
+        rez.echipate = json.echipate.map((item: any) => new Costumizabil().deserialize(item));
         rez.sustineri = json.sustineri.map((item: any) => item);
         rez.donatii = json.donatii.map((item: any) => new Donatie().deserialize(item));
         rez.cauze = deserializeCauzaArray(json.cauze);

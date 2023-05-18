@@ -11,6 +11,7 @@ import ProfileConfig from "./src/screens/ProfileConfig";
 import {UserProvider} from "./src/utils/UserContext";
 import {Setari} from "./src/screens/Setari";
 import CauzeleMele from "./src/screens/CauzeleMele";
+import Shop from "./src/screens/Shop";
 
 const Stack = createStackNavigator();
 
@@ -27,6 +28,7 @@ export default function App() {
                         <Stack.Screen name="Adauga" component={CauzaCreate} options={{headerShown: false}}></Stack.Screen>
                         <Stack.Screen name="Profil" component={ProfileConfig} options={{headerShown: false}}></Stack.Screen>
                         <Stack.Screen name="Setari" component={Setari} options={{headerShown: false}}></Stack.Screen>
+                        <Stack.Screen name="Shop" component={Shop} options={{headerShown: false}}></Stack.Screen>
                     </Stack.Navigator>
                 </UserProvider>
            </NavigationContainer>
