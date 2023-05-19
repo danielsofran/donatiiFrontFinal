@@ -1,18 +1,39 @@
-import React, { useState } from 'react';
-import {View, Text, TouchableOpacity, StyleSheet, TextInput} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {View, Text, TouchableOpacity, StyleSheet, TextInput, ScrollView} from 'react-native';
 import getLocation from "../../utils/GetLocation";
-import RangeSlider from 'react-native-range-slider';
+import NumberInput from "./NumberInput";
+import {axiosInstance} from "../../api/axiosInstance";
+import {TagAnimal} from "../../model/TagAnimal";
+import CustomCheckbox from "./CustomCheckbox";
+import {AnimalTag} from "./AnimalTag";
+import colors from "../../utils/Colors";
+import {Cauza, deserializeCauzaArray} from "../../model/Cauza";
 
-const FilterMenu = () => {
-    const [isOpen, setIsOpen] = useState(false);
-    const [isOpenLocation, setIsOpenLocation] = useState(false);
-    const [isOpenSum, setIsOpenSum] = useState(false);
-    const [isOpenTags, setIsOpenTags] = useState(false);
-    const [isOpenOthers, setIsOpenOthers] = useState(false);
+
+const FilterMenu = ({ callFunction }) => {
+    const [isOpen, setIsOpen] = useState(true);
+    const [isOpenLocation, setIsOpenLocation] = useState(true);
+    const [isOpenSum, setIsOpenSum] = useState(true);
+    const [isOpenTags, setIsOpenTags] = useState(true);
+    const [isOpenOthers, setIsOpenOthers] = useState(true);
 
     const [locatie, setLocatie] = useState('');
-    const [suma, setSuma] = useState([]);
+    const [sumaMin, setSumaMin] = useState(0);
+    const [sumaMax, setSumaMax] = useState(1000000000);
+    const [interests, setInterests] = useState([]);
+    const [showCompleted, setShowCompleted] = useState(false);
+    const [doarAdapost, setDoarAdaport] = useState(false);
+
+
     const [tags, setTags] = useState([]);
+
+    useEffect(() => {
+        axiosInstance.get('/tags').then((response) => {
+            setTags(new TagAnimal().deserializeArray(response.data));
+        }).catch(error => {
+            console.log(error.response.data)
+        });
+    },[])
 
     function handleLocation() {
         getLocation().then((location) => {
@@ -21,8 +42,30 @@ const FilterMenu = () => {
         });
     }
 
+    const handleInterestChange = (interes) => {
+        if (interests.includes(interes)) {
+            setInterests(interests.filter(item => item !== interes));
+        } else {
+            interests.push(interes);
+        }
+    };
+
     function handleFilter() {
-        console.log('Filter');
+        const params = {
+            locatie: locatie,
+            sumMin: sumaMin,
+            sumMax: sumaMax,
+            taguri: interests.map(interest => interest.id).join(','),
+            rezolvate: showCompleted,
+            adaposturi: doarAdapost,
+        };
+
+        axiosInstance.get('/cauza/filter',{ params: params }).then((response) => {
+            let cauze: Cauza[] = deserializeCauzaArray(response.data);
+            callFunction(cauze);
+        }).catch(error => {
+            console.log(error)
+        });
     }
 
     return (
@@ -59,7 +102,21 @@ const FilterMenu = () => {
                         <View style={styles.listContainer}>
                             {isOpenSum && (
                                 <View style={styles.list}>
-
+                                    <View style={{
+                                        flexDirection: 'row',
+                                        alignItems: 'center',
+                                    }}>
+                                        <Text>Minim: </Text>
+                                        <NumberInput minvalue={0} maxvalue={sumaMax} onValueChange={setSumaMin} initial={0}/>
+                                    </View>
+                                    <View style={{
+                                        flexDirection: 'row',
+                                        alignItems: 'center',
+                                        marginTop: 10,
+                                    }}>
+                                        <Text>Maxim: </Text>
+                                        <NumberInput minvalue={sumaMin} maxvalue={1000000000} onValueChange={setSumaMax} initial={1000000000}/>
+                                    </View>
                                 </View>
                             )}
                         </View>
@@ -71,9 +128,17 @@ const FilterMenu = () => {
                         </TouchableOpacity>
                         <View style={styles.listContainer}>
                             {isOpenTags && (
-                                <View style={styles.list}>
-                                    <Text>List 1 Item 1</Text>
-                                    <Text>List 1 Item 2</Text>
+                                <View style={[styles.list, {alignItems: 'flex-start', height: 100}]}>
+                                    <ScrollView
+                                        style={{}}>
+                                        {tags.map((tag) => (
+                                            <View key={tag.id} style={styles.checkboxContainer}>
+                                                <CustomCheckbox value={false}
+                                                                onValueChange={() => handleInterestChange(tag)} label={""} />
+                                                <AnimalTag animal={tag.nume} />
+                                            </View>
+                                        ))}
+                                    </ScrollView>
                                 </View>
                             )}
                         </View>
@@ -85,9 +150,25 @@ const FilterMenu = () => {
                         </TouchableOpacity>
                         <View style={styles.listContainer}>
                             {isOpenOthers && (
-                                <View style={styles.list}>
-                                    <Text>List 1 Item 1</Text>
-                                    <Text>List 1 Item 2</Text>
+                                <View style={[styles.list, {alignItems: 'flex-start'}]}>
+                                    <View style={{
+                                        flexDirection: 'row',
+                                        alignItems: 'center',
+                                    }}>
+                                        <CustomCheckbox value={false}
+                                                        onValueChange={() => setShowCompleted(!showCompleted)} label={''}/>
+                                        <Text style={{fontSize: 14, textAlign: 'center'}}>Arata cauzele rezolvate</Text>
+                                    </View>
+
+                                    <View style={{
+                                        marginTop: 10,
+                                        flexDirection: 'row',
+                                        alignItems: 'center',
+                                    }}>
+                                        <CustomCheckbox value={false}
+                                                        onValueChange={() => setDoarAdaport(!doarAdapost)} label={''}/>
+                                        <Text style={{fontSize: 14, textAlign: 'center'}}>Arata doar adaposturi</Text>
+                                    </View>
                                 </View>
                             )}
                         </View>
@@ -163,6 +244,12 @@ const styles = StyleSheet.create({
         borderColor: 'black',
         fontSize: 16,
         padding: 8,
+    },
+    checkboxContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 10,
+        marginRight: 40,
     },
 });
 

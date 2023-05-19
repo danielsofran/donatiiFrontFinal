@@ -27,7 +27,7 @@ const Home = ({ navigation}) => {
     return (
         <WebNavbar navigation={navigation}>
             <Banner active={true/*!(localStorage.getItem(`mesaje${userRef.current.id}`) === 'false')*/}></Banner>
-            <FilterMenu></FilterMenu>
+            <FilterMenu callFunction={setCauze}></FilterMenu>
             {cauze.length > 0?
                 <CauzeList cauze={cauze} user={userRef.current}/>:
                 <View style={{
