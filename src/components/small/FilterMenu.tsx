@@ -157,7 +157,7 @@ const FilterMenu = ({ callFunction }) => {
                                     }}>
                                         <CustomCheckbox value={false}
                                                         onValueChange={() => setShowCompleted(!showCompleted)} label={''}/>
-                                        <Text style={{fontSize: 14, textAlign: 'center'}}>Arata cauzele rezolvate</Text>
+                                        <Text style={{fontSize: 14, textAlign: 'center'}}>Ascunde cauzele rezolvate</Text>
                                     </View>
 
                                     <View style={{
