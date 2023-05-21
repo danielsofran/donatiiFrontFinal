@@ -11,11 +11,11 @@ import {Cauza, deserializeCauzaArray} from "../../model/Cauza";
 
 
 const FilterMenu = ({ callFunction }) => {
-    const [isOpen, setIsOpen] = useState(true);
-    const [isOpenLocation, setIsOpenLocation] = useState(true);
-    const [isOpenSum, setIsOpenSum] = useState(true);
-    const [isOpenTags, setIsOpenTags] = useState(true);
-    const [isOpenOthers, setIsOpenOthers] = useState(true);
+    const [isOpen, setIsOpen] = useState(false);
+    const [isOpenLocation, setIsOpenLocation] = useState(false);
+    const [isOpenSum, setIsOpenSum] = useState(false);
+    const [isOpenTags, setIsOpenTags] = useState(false);
+    const [isOpenOthers, setIsOpenOthers] = useState(false);
 
     const [locatie, setLocatie] = useState('');
     const [sumaMin, setSumaMin] = useState(0);

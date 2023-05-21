@@ -5,6 +5,7 @@ export enum GenderType{
 }
 
 export enum Tip{
+    Animal,
     Background,
     Border,
     Item,
