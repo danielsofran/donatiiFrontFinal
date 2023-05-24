@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import { View, StyleSheet, FlatList, Image } from 'react-native';
 import {Poza} from "../../model/Poza";
+import {API_URL} from "../../api/axiosInstance";
 
 interface Props {
     pictures: Poza[];
@@ -28,7 +29,7 @@ const PictureNavigator: React.FC<Props> = ({ pictures }) => {
                     horizontal
                     renderItem={({ item }) => (
                         <View style={styles.pictureContainer}>
-                            <Image source={{ uri: item.url }} style={{height: 150, aspectRatio: aspectRatios[item.id]}}/>
+                            <Image source={{ uri: API_URL + item.url }} style={{height: 150, aspectRatio: aspectRatios[item.id]}}/>
                         </View>
                         )}
                 >

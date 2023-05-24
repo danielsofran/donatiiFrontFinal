@@ -4,7 +4,7 @@ import {API_URL, axiosInstance} from "../../api/axiosInstance";
 import {Costumizabil, CostumizabilState} from "../../model/Costumizabil";
 import {UserContext} from "../../utils/UserContext";
 
-const ShopItem = ({ item, call }) => {
+const ShopItem = ({ item, call, setEquippedItemId, equippedItemId }) => {
     // @ts-ignore
     const { userRef } = useContext(UserContext);
     //
@@ -13,11 +13,8 @@ const ShopItem = ({ item, call }) => {
     const [isEquipped, setIsEquiped] = useState(userRef.current.echipate.find(c => c.id === item.id));
 
     useEffect(() => {
-        console.warn('useEffect ShopItem');
-        setIsDisabled(userRef.current.level < item.levelMin || userRef.current.coins < item.costBani);
-        setIsPurchased(userRef.current.costumizabile.find(c => c.id === item.id));
         setIsEquiped(userRef.current.echipate.find(c => c.id === item.id));
-    }, [userRef.current]);
+    }, [userRef.current, equippedItemId]);
 
     //
     // useEffect(() => {
@@ -54,17 +51,16 @@ const ShopItem = ({ item, call }) => {
             });
         }
         else {
-            console.log('EQUIPED');
-            axiosInstance.put(`/user/equip/${userRef.current.id}/${item.id}`).then((response) => {
-                //console.log(response.data);
-                setIsEquiped(true);
-                userRef.current.echipate = new Costumizabil().deserializeArray(response.data);
-                console.log("EQUIPED items");
-                console.log(userRef.current.echipate);
-                call();
-            }).catch(error => {
-                console.log(error.response.data)
-            });
+            axiosInstance.put(`/user/equip/${userRef.current.id}/${item.id}`)
+                .then((response) => {
+                    setIsEquiped(true);
+                    userRef.current.echipate = new Costumizabil().deserializeArray(response.data);
+                    call();
+                    setEquippedItemId(item.id); // Set the equipped item ID
+                })
+                .catch(error => {
+                    console.log(error.response.data);
+                });
         }
         }
     };
@@ -76,7 +72,7 @@ const ShopItem = ({ item, call }) => {
             height: 400,
             width: 300,
             borderWidth: 5,
-            backgroundColor: 'rgba(210,196,177,0.48)',
+            backgroundColor: 'rgba(210,196,177,0.68)',
             borderColor: 'rgba(173,173,173,0.68)',
             alignItems: 'center',
             boxShadow: '0px 0px 20px rgba(184, 134, 11, 0.3)'

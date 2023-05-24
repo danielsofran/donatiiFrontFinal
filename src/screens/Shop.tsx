@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useRef} from 'react';
-import {ScrollView, StyleSheet, View} from 'react-native';
+import {ScrollView, StyleSheet, View, Image} from 'react-native';
 import ShopItem from "../components/small/ShopItem";
 import {UserContext} from "../utils/UserContext";
 import {axiosInstance} from "../api/axiosInstance";
@@ -12,6 +12,7 @@ const Shop = () => {
     const { userRef } = useContext(UserContext);
     const [costumizabile, setCostumizabile] = React.useState(userRef.current.costumizabile);
     const [echipate, setEchipate] = React.useState(userRef.current.echipate);
+    const [equippedItemId, setEquippedItemId] = React.useState(null);
 
     const prepareEchipate = () => {
         setEchipate([]);
@@ -50,13 +51,17 @@ const Shop = () => {
     },[])
 
     return (
-        <ScrollView>
+        <ScrollView style={{width: '100%'}}>
+            <Image style={styles.background} source={require('../../assets/WildBackground.jpg')}></Image>
             <ImageLayer images={echipate}/>
-            <View style={styles.container}>
-                {costumizabile.map(item => (
-                    <ShopItem key={item.id} item={item} call={prepareEchipate}/>
-                ))}
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', marginLeft: 'auto', marginRight: 'auto'}}>
+                <View style={styles.container}>
+                    {costumizabile.map(item => (
+                        <ShopItem key={item.id} item={item} call={prepareEchipate} setEquippedItemId={setEquippedItemId} equippedItemId={equippedItemId} />
+                    ))}
+                </View>
             </View>
+
         </ScrollView>
     );
 };
@@ -68,6 +73,12 @@ const styles = StyleSheet.create({
         flexWrap: 'wrap',
         justifyContent: 'flex-start',
         alignItems: 'center',
+    },
+    background: {
+        position: 'absolute',
+        width: '100%',
+        height: '100%',
+        resizeMode: 'cover',
     }
 });
 
