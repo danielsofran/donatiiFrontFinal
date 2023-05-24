@@ -1,4 +1,4 @@
-import Geolocation from '@react-native-community/geolocation';
+    import Geolocation from '@react-native-community/geolocation';
 
 const getLocation = async () => {
     try {

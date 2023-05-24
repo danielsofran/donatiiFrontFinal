@@ -8,8 +8,10 @@ import ImageLayer from "../components/small/ImageLayer";
 import {Tip} from "../model/Enums";
 
 const Shop = () => {
-    const [costumizabile, setCostumizabile] = React.useState([]);
-    const [echipate, setEchipate] = React.useState([]);
+    // @ts-ignore
+    const { userRef } = useContext(UserContext);
+    const [costumizabile, setCostumizabile] = React.useState(userRef.current.costumizabile);
+    const [echipate, setEchipate] = React.useState(userRef.current.echipate);
 
     const prepareEchipate = () => {
         setEchipate([]);
@@ -47,15 +49,12 @@ const Shop = () => {
 
     },[])
 
-    // @ts-ignore
-    const { userRef } = useContext(UserContext);
-
     return (
         <ScrollView>
             <ImageLayer images={echipate}/>
             <View style={styles.container}>
                 {costumizabile.map(item => (
-                    <ShopItem key={item.id} item={item} user={userRef} call={setEchipate}/>
+                    <ShopItem key={item.id} item={item} call={prepareEchipate}/>
                 ))}
             </View>
         </ScrollView>
