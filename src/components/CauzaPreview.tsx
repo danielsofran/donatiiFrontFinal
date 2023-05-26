@@ -10,24 +10,27 @@ import {AnimalsTag, AnimalTag} from "./small/AnimalTag";
 import {LinearGradient} from "expo-linear-gradient";
 import {User} from "../model/User";
 import {axiosInstance} from "../api/axiosInstance";
+import {useAuth} from "../utils/UseAuth";
 
 
-const CauzaPreview = ({cauza, user} : {cauza: Cauza, user: User}) => {
+const CauzaPreview = ({cauza} : {cauza: Cauza}) => {
+    // @ts-ignore
+    const { userRef } = useAuth();
 
-    const [liked, setLiked] = useState(user.sustineri.includes(cauza.id));
+    const [liked, setLiked] = useState(userRef.current.sustineri.includes(cauza.id));
     const [nrLikes, setNrLikes] = useState(cauza.nrSustinatori)
 
     function handleLike() {
         setLiked(!liked);
-        axiosInstance.put(`/user/like/${user.id}/${cauza.id}`).then((response) => {
+        axiosInstance.put(`/user/like/${userRef.current.id}/${cauza.id}`).then((response) => {
             console.log(response.data)
             if(!!liked) {
-                    setNrLikes(nrLikes-1);
-                user.sustineri = user.sustineri.filter((id) => id !== cauza.id);
+                setNrLikes(nrLikes-1);
+                userRef.current.sustineri = userRef.current.sustineri.filter((id) => id !== cauza.id);
             }
             else {
                 setNrLikes(nrLikes+1)
-                user.sustineri.push(cauza.id);
+                userRef.current.sustineri.push(cauza.id);
             }
         }).catch(error => {
             console.log(error.response.data)
@@ -35,69 +38,69 @@ const CauzaPreview = ({cauza, user} : {cauza: Cauza, user: User}) => {
     }
 
     return (
-    <LinearGradient colors={['rgba(27,0,255,0.29)', 'rgba(164,167,227,0.63)']}
-        style={styles.container}>
-        <View>
-            <LinearGradient
-                colors={['rgba(71,49,225,0.7)', 'rgba(100,82,217,0.45)', 'rgba(69,57,166,0.25)']}
-                start={[0, 0]} end={[1, 1]}
-                style={{overflow: 'hidden', marginBottom: 10, borderRadius: 20}}
-            >
-                <Text style={styles.title}>{cauza.titlu}</Text>
-                <></>
-            </LinearGradient>
-            <View style={styles.titleLocation}>
-                <View style={styles.listData}>
-                {
-                    isCauzaAdapost(cauza) ?
-                        <Text style={styles.name_age_race}>🏡 {cauza.nume}</Text> :
-                    <>
-                        <Text style={styles.name_age_race}>Name: {cauza.numeAnimal}</Text>
-                        <Text style={styles.name_age_race}>Age: {cauza.varstaAnimal} ani</Text>
-                        <Text style={styles.name_age_race}>Race: {cauza.rasaAnimal}</Text>
-                    </>
-                }
-                </View>
-                <View style={{display: 'flex', flexDirection: "row", alignItems: 'center', gap: 10}}>
-                {Platform.OS === 'web' && <Text style={{fontSize: 18}}>Location:</Text>}
-                <View style={styles.locationContainer}>
-                    <Text style={styles.location}> 📍{cauza.locatie}</Text>
-                </View>
+        <LinearGradient colors={['rgba(27,0,255,0.29)', 'rgba(164,167,227,0.63)']}
+                        style={styles.container}>
+            <View>
+                <LinearGradient
+                    colors={['rgba(71,49,225,0.7)', 'rgba(100,82,217,0.45)', 'rgba(69,57,166,0.25)']}
+                    start={[0, 0]} end={[1, 1]}
+                    style={{overflow: 'hidden', marginBottom: 10, borderRadius: 20}}
+                >
+                    <Text style={styles.title}>{cauza.titlu}</Text>
+                    <></>
+                </LinearGradient>
+                <View style={styles.titleLocation}>
+                    <View style={styles.listData}>
+                        {
+                            isCauzaAdapost(cauza) ?
+                                <Text style={styles.name_age_race}>🏡 {cauza.nume}</Text> :
+                                <>
+                                    <Text style={styles.name_age_race}>Name: {cauza.numeAnimal}</Text>
+                                    <Text style={styles.name_age_race}>Age: {cauza.varstaAnimal} ani</Text>
+                                    <Text style={styles.name_age_race}>Race: {cauza.rasaAnimal}</Text>
+                                </>
+                        }
+                    </View>
+                    <View style={{display: 'flex', flexDirection: "row", alignItems: 'center', gap: 10}}>
+                        {Platform.OS === 'web' && <Text style={{fontSize: 18}}>Location:</Text>}
+                        <View style={styles.locationContainer}>
+                            <Text style={styles.location}> 📍{cauza.locatie}</Text>
+                        </View>
+                    </View>
+
                 </View>
 
-            </View>
-
-            <Text style={styles.description}>{cauza.descriere}</Text>
-            <PictureNavigator pictures={cauza.poze}></PictureNavigator>
-            <View style={{marginHorizontal: Platform.OS === 'web' ? 20 : 0 }}>
-            <View style={{
-                paddingLeft: 10,
-                paddingRight: 10,
-                paddingBottom: 5,
-            }}>
-                <Progress cauza={cauza}/>
-            </View>
-            <View style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-            }}>
-                {isCauzaPersonala(cauza) ?
-                    <AnimalTag animal={cauza.tagAnimal.nume}/> :
-                    <AnimalsTag animals={cauza.taguri.map(tag => tag.nume)}/>
-                }
-                <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                    <Text style={{fontSize: 12, paddingRight: 2, paddingBottom: 0}}>
-                        {nrLikes}
-                    </Text>
-                    <TouchableOpacity style={styles.like} onPress={handleLike}>
-                        <MaterialCommunityIcons name={liked ? 'heart' : 'heart-outline'} size={30} color={liked ? 'red' : 'gray'} />
-                    </TouchableOpacity>
+                <Text style={styles.description}>{cauza.descriere}</Text>
+                <PictureNavigator pictures={cauza.poze}></PictureNavigator>
+                <View style={{marginHorizontal: Platform.OS === 'web' ? 20 : 0 }}>
+                    <View style={{
+                        paddingLeft: 10,
+                        paddingRight: 10,
+                        paddingBottom: 5,
+                    }}>
+                        <Progress cauza={cauza}/>
+                    </View>
+                    <View style={{
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
+                    }}>
+                        {isCauzaPersonala(cauza) ?
+                            <AnimalTag animal={cauza.tagAnimal.nume}/> :
+                            <AnimalsTag animals={cauza.taguri.map(tag => tag.nume)}/>
+                        }
+                        <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                            <Text style={{fontSize: 12, paddingRight: 2, paddingBottom: 0}}>
+                                {nrLikes}
+                            </Text>
+                            <TouchableOpacity style={styles.like} onPress={handleLike}>
+                                <MaterialCommunityIcons name={liked ? 'heart' : 'heart-outline'} size={30} color={liked ? 'red' : 'gray'} />
+                            </TouchableOpacity>
+                        </View>
+                    </View>
                 </View>
+                {liked && <HeartsStream loading={false}></HeartsStream>}
             </View>
-            </View>
-            {liked && <HeartsStream loading={false}></HeartsStream>}
-        </View>
-    </LinearGradient>
+        </LinearGradient>
     );
 };
 

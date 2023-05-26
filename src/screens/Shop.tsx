@@ -1,11 +1,12 @@
 import React, {useContext, useEffect, useRef} from 'react';
-import {ScrollView, StyleSheet, View, Image} from 'react-native';
+import {ScrollView, StyleSheet, View, Image, Text} from 'react-native';
 import ShopItem from "../components/small/ShopItem";
 import {UserContext} from "../utils/UserContext";
 import {axiosInstance} from "../api/axiosInstance";
 import {Costumizabil} from "../model/Costumizabil";
 import ImageLayer from "../components/small/ImageLayer";
 import {Tip} from "../model/Enums";
+import {LinearGradient} from "expo-linear-gradient";
 
 const Shop = () => {
     // @ts-ignore
@@ -44,23 +45,25 @@ const Shop = () => {
             console.log(error.response.data)
         });
         console.log(userRef.current.echipate)
-        prepareEchipate();
 
         // pregatire echipate
 
-    },[])
+    },[]);
 
     return (
-        <ScrollView style={{width: '100%'}}>
+        <ScrollView style={{width: '100%', padding: 0, margin: 0}}>
             <Image style={styles.background} source={require('../../assets/WildBackground.jpg')}></Image>
-            <ImageLayer images={echipate}/>
-            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', marginLeft: 'auto', marginRight: 'auto'}}>
-                <View style={styles.container}>
-                    {costumizabile.map(item => (
-                        <ShopItem key={item.id} item={item} call={prepareEchipate} setEquippedItemId={setEquippedItemId} equippedItemId={equippedItemId} />
-                    ))}
-                </View>
+            <View style={styles.header}>
+                <LinearGradient colors={['rgba(118,210,196,0.67)', 'rgba(118,210,196,0.43)', 'transparent']} style={{position: 'absolute', left: 0, right: 0, top: 0, height: "100%"}}/>
+                <Text style={styles.prewiewText}>AVATAR</Text>
+                <ImageLayer images={echipate} size={300}/>
             </View>
+            <View style={styles.container}>
+                {costumizabile.map(item => (
+                    <ShopItem key={item.id} item={item} call={prepareEchipate} setEquippedItemId={setEquippedItemId} equippedItemId={equippedItemId} />
+                ))}
+            </View>
+
 
         </ScrollView>
     );
@@ -68,17 +71,37 @@ const Shop = () => {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
         flexDirection: 'row',
         flexWrap: 'wrap',
-        justifyContent: 'flex-start',
+        justifyContent: 'center',
         alignItems: 'center',
     },
     background: {
+        padding: 0,
+        margin: 0,
         position: 'absolute',
         width: '100%',
         height: '100%',
         resizeMode: 'cover',
+    },
+    prewiewText: {
+        fontFamily: 'Roboto',
+        fontSize: 24,
+        fontWeight: 'bold',
+        color: 'whitesmoke',
+        textShadowColor: 'rgba(255,255,255,0.75)',
+        textShadowOffset: {width: 0, height: 0},
+        textShadowRadius: 10,
+        marginBottom: 7,
+        zIndex: 5,
+    },
+    header: {
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        paddingTop: 20,
+        paddingBottom: 40,
+        marginBottom: 20,
     }
 });
 

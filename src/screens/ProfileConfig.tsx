@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import {View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView} from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import CustomCheckbox from "../components/small/CustomCheckbox";
 import Colors from "../utils/Colors";
@@ -74,22 +74,25 @@ const ProfileConfig = ({ navigation }) => {
             userRef.current.parola = password;
             userRef.current.email = email;
             userRef.current.fullName = fullname;
-            userRef.current.gender = gender;
+            //userRef.current.gender = gender;
             userRef.current.interese = interests;
             axiosInstance.put('/user/' + userRef.current.id, userRef.current).then((response) => {
                 setLoading(false);
                 setErrorColor('blue');
                 setErrortext('Profile updated successfully');
+                alert('Profile updated successfully');
+                setLoading(false);
             }).catch(error => {
                 console.log(error.response.data);
+                alert('Error updating profile')
+                setLoading(false);
             });
-            setLoading(false);
+
         }
     };
 
     return (
-        <WebNavbar navigation={navigation}>
-        <View style={styles.background}>
+        <ScrollView style={styles.background}>
             <Loader loading={loading} />
             <View style={styles.container}>
                 <View style={styles.row}>
@@ -114,9 +117,9 @@ const ProfileConfig = ({ navigation }) => {
                         onValueChange={(itemValue, itemIndex) =>
                             setGender(itemValue)
                         }>
-                        <Picker.Item label="Male" value="male" style={styles.pickerItem}/>
-                        <Picker.Item label="Female" value="female" style={styles.pickerItem}/>
-                        <Picker.Item label="Confidential" value="confidential" style={styles.pickerItem}/>
+                        <Picker.Item label="Male" value="Male" style={styles.pickerItem}/>
+                        <Picker.Item label="Female" value="Female" style={styles.pickerItem}/>
+                        <Picker.Item label="Confidential" value="Confidential" style={styles.pickerItem}/>
                     </Picker>
                 </View>
 
@@ -148,8 +151,7 @@ const ProfileConfig = ({ navigation }) => {
                     {errortext}
                 </Text>
             </View>
-        </View>
-        </WebNavbar>
+        </ScrollView>
     );
 };
 

@@ -16,7 +16,7 @@ const ImagePickerComponent = (props:{onImagesChange?: (imgs: any[]) => void}) =>
         if (!result.canceled) {
             const newImages = [...images];
             result.assets.forEach((asset, index) => {
-                console.log(asset.uri);
+                // console.log(asset.uri);
                 newImages.push({ id: imageId.current, imageUri: asset.uri });
                 imageId.current++;
             });

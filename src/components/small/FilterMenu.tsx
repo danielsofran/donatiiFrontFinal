@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text, TouchableOpacity, StyleSheet, TextInput, ScrollView} from 'react-native';
+import {View, Text, TouchableOpacity, StyleSheet, TextInput, ScrollView, Platform} from 'react-native';
 import getLocation from "../../utils/GetLocation";
 import NumberInput from "./NumberInput";
 import {axiosInstance} from "../../api/axiosInstance";
@@ -68,6 +68,9 @@ const FilterMenu = ({ callFunction }) => {
         });
     }
 
+    const getListStyle = () =>
+        Platform.OS === 'web'? styles.listWeb: styles.listMobile;
+
     return (
         <View style={styles.container}>
             <TouchableOpacity onPress={() => setIsOpen(!isOpen)} style={styles.openButton}>
@@ -75,8 +78,10 @@ const FilterMenu = ({ callFunction }) => {
             </TouchableOpacity>
             {isOpen && (
                 <View style={{
-                    flexDirection: 'row',
+                    flexDirection: Platform.OS === 'web'? 'row': 'column',
                     alignItems: 'center',
+                    gap: 10,
+                    marginTop: Platform.OS === 'web'? 0: 10,
                 }}>
                     <View style={styles.element}>
                         <TouchableOpacity onPress={() => setIsOpenLocation(!isOpenLocation)} style={[styles.button, {backgroundColor: 'rgba(62,39,231,0.68)'}]}>
@@ -84,7 +89,7 @@ const FilterMenu = ({ callFunction }) => {
                         </TouchableOpacity>
                         <View style={styles.listContainer}>
                             {isOpenLocation && (
-                                <View style={styles.list}>
+                                <View style={getListStyle()}>
                                     <TextInput style={styles.input} value={locatie} onChangeText={setLocatie} />
                                     <Text style={{
                                         fontSize: 14,
@@ -101,7 +106,7 @@ const FilterMenu = ({ callFunction }) => {
                         </TouchableOpacity>
                         <View style={styles.listContainer}>
                             {isOpenSum && (
-                                <View style={styles.list}>
+                                <View style={getListStyle()}>
                                     <View style={{
                                         flexDirection: 'row',
                                         alignItems: 'center',
@@ -128,7 +133,7 @@ const FilterMenu = ({ callFunction }) => {
                         </TouchableOpacity>
                         <View style={styles.listContainer}>
                             {isOpenTags && (
-                                <View style={[styles.list, {alignItems: 'flex-start', height: 100}]}>
+                                <View style={[getListStyle(), {alignItems: 'flex-start', height: 100}]}>
                                     <ScrollView
                                         style={{}}>
                                         {tags.map((tag) => (
@@ -150,7 +155,7 @@ const FilterMenu = ({ callFunction }) => {
                         </TouchableOpacity>
                         <View style={styles.listContainer}>
                             {isOpenOthers && (
-                                <View style={[styles.list, {alignItems: 'flex-start'}]}>
+                                <View style={[getListStyle(), {alignItems: 'flex-start'}]}>
                                     <View style={{
                                         flexDirection: 'row',
                                         alignItems: 'center',
@@ -187,8 +192,9 @@ const styles = StyleSheet.create({
     container: {
         marginVertical: 10,
         zIndex: 1,
-        flexDirection: 'row',
-        alignItems: 'center',
+        flexDirection: Platform.OS === 'web'? 'row': 'column',
+        alignItems: Platform.OS === 'web'? 'center': 'flex-start',
+        display: 'flex',
     },
     openButton: {
         marginHorizontal: 10,
@@ -211,11 +217,12 @@ const styles = StyleSheet.create({
     },
     listContainer: {
         opacity: 0.8,
-        position: 'absolute',
-        top: '100%',
+        // position: 'absolute',
+        flexDirection: Platform.OS === 'web'? 'row': 'column',
+        // top: '100%',
         width: '100%',
     },
-    list: {
+    listWeb: {
         borderRadius: 25,
         width: '100%',
         position: 'absolute',
@@ -225,6 +232,20 @@ const styles = StyleSheet.create({
         padding: 10,
         justifyContent: 'center',
         alignItems: 'center',
+        marginTop: 10,
+    },
+    listMobile: {
+        borderRadius: 25,
+        width: '100%',
+        // position: 'absolute',
+        // top: '100%',
+        // left: Platform.OS === 'web'? 0: undefined,
+        // right: Platform.OS === 'web'? undefined: 0,
+        backgroundColor: 'lightblue',
+        padding: 10,
+        minWidth: '60%',
+        marginTop: 10,
+        marginLeft: 10,
     },
     buttonText: {
         textAlign: 'center',
@@ -238,6 +259,7 @@ const styles = StyleSheet.create({
     },
     input: {
         width: '80%',
+        minWidth: 160,
         height: 40,
         borderWidth: 1,
         borderRadius: 25,

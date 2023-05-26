@@ -1,7 +1,6 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {StyleSheet, View, Image, ActivityIndicator} from 'react-native';
 import * as FileSystem from 'expo-file-system';
-import {advanceAnimationByFrame} from "react-native-reanimated/lib/types/lib/reanimated2/jestUtils";
 
 const HeartsStream = (props) => {
     const [showComponent, setShowComponent] = useState(true);

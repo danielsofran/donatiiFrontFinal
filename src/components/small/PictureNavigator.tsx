@@ -12,7 +12,7 @@ const PictureNavigator: React.FC<Props> = ({ pictures }) => {
 
     useEffect(() => {
         pictures.forEach((picture) => {
-            Image.getSize(picture.url, (width, height) => {
+            Image.getSize(API_URL + picture.url, (width, height) => {
                 setAspectRatios((prevAspectRatios) => ({
                     ...prevAspectRatios,
                     [picture.id]: width / height,

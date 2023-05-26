@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useRef, useState} from 'react';
-import {View, Text, TextInput, TouchableOpacity, StyleSheet, Platform} from 'react-native';
+import {View, Text, TextInput, TouchableOpacity, StyleSheet, Platform, ScrollView} from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import CustomCheckbox from "../components/small/CustomCheckbox";
 import Colors from "../utils/Colors";
@@ -8,7 +8,7 @@ import {TagAnimal} from "../model/TagAnimal";
 import Animal from "../utils/AnimalTagsEmojies";
 import PicturePicker from "../components/small/PicturePicker";
 import { AnimalTag } from "../components/small/AnimalTag";
-import {axiosInstance} from "../api/axiosInstance";
+import {API_URL, axiosInstance} from "../api/axiosInstance";
 import {CauzaAdapost, CauzaPersonala} from "../model/Cauza";
 import {User} from "../model/User";
 import {useAuth} from "../utils/UseAuth";
@@ -102,7 +102,8 @@ const CauzaCreate = ({ navigation }) => {
                 cauza.poze = images;
             }
             console.log(userRef.current);
-            console.log(JSON.stringify({ type: cauza.type === 'CauzaAdapost' ? 'adapost': 'personala', ...cauza }));
+            // console.log(JSON.stringify({ type: cauza.type === 'CauzaAdapost' ? 'adapost': 'personala', ...cauza }));
+
             axiosInstance.post('/cauza/' + userRef.current.id, cauza)
                 .then((response) => {
 
@@ -113,14 +114,19 @@ const CauzaCreate = ({ navigation }) => {
                     images.map((image, index) =>
                         fetch(image.imageUri)
                             .then(response => response.blob())
-                            .then(blob => formData.append(`picture${index}`, blob, `${Date.now()}_${Math.random().toString(36).substring(2)}.jpg`))
+                            .then(blob => formData.append(`pictures`, blob, `${Date.now()}_${Math.random().toString(36).substring(2)}.jpg`))
                     )
                 ).then(() => {
 
-                    const xhr = new XMLHttpRequest();
-                    xhr.open('POST', 'http://localhost:8080/cauza/saveImages/' + cauza.id);
-                    xhr.setRequestHeader('Content-Type', 'multipart/form-data');
-                    xhr.send(formData);
+                    // const xhr = new XMLHttpRequest();
+                    // xhr.open('POST', API_URL+'/cauza/saveImages/' + cauza.id);
+                    // xhr.setRequestHeader('Content-Type', 'multipart/form-data');
+                    // xhr.send(formData);
+                    // xhr.onreadystatechange = function() {
+                    //     if (xhr.readyState === 4) {
+                    //         console.log(xhr.response);
+                    //     }
+                    // }
                     /*
                     axiosInstance.post('/cauza/saveImages/' + response.data.id, images).then((response) => {
                     }).catch(error => {
@@ -128,10 +134,36 @@ const CauzaCreate = ({ navigation }) => {
                     })
                     */
 
+                    // axiosInstance.post('/cauza/saveImages/' + cauza.id, formData, {
+                    //     headers: {
+                    //         'Content-Type': 'multipart/form-data',
+                    //         'Accept': 'application/json'
+                    //     }
+                    // }).then((response) => {
+                    //     console.log('Poze adaugate cu succes');
+                    //     navigation.navigate('Home');
+                    // }).catch(error => {
+                    //     console.log(error.response.data)
+                    // });
+                    fetch(API_URL + '/cauza/saveImages/' + cauza.id, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'multipart/form-data',
+                            'Accept': 'application/json'
+                        },
+                        body: formData
+                    }).then((response) => {
+                        console.warn(response)
+                        console.log('Poze adaugate cu succes');
+                        navigation.navigate('Home');
+                    }).catch(error => {
+                        console.error(error.response.data)
+                    })
+
                 });
                 //CAUZA CREATA
             }).catch(error => {
-                console.log(error.response.data)
+                console.error(error.response.data)
             });
             setLoading(false);
         }
@@ -161,8 +193,7 @@ const CauzaCreate = ({ navigation }) => {
         </>
 
     return (
-        <WebNavbar navigation={navigation}>
-        <View style={styles.background}>
+        <ScrollView style={styles.background}>
             <Loader loading={loading} />
             <View style={styles.container}>
                 <View style={styles.row}>
@@ -245,8 +276,7 @@ const CauzaCreate = ({ navigation }) => {
                     {errortext}
                 </Text>
             </View>
-        </View>
-        </WebNavbar>
+        </ScrollView>
     );
 };
 

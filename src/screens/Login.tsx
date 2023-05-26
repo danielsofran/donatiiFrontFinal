@@ -9,6 +9,8 @@ import {User} from "../model/User";
 import {useAuth} from "../utils/UseAuth";
 import {UserContext} from "../utils/UserContext";
 import { Checkbox, Text as PaperText } from 'react-native-paper';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 const Login = ({ navigation }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -29,25 +31,29 @@ const Login = ({ navigation }) => {
     }
 
     useEffect(() => {
-        if (localStorage.getItem(`userRef`) != '') {
-            let userLogin = new User();
-            let user = JSON.parse(localStorage.getItem(`userRef`));
-            userLogin.email = user.email;
-            userLogin.parola = user.parola;
-            axiosInstance.post('/user/login', userLogin)
-                .then((response) => {
-                    userLogin = new User().deserialize(response.data)
-                    console.log(response.data)
-                    console.log(userLogin)
+        const getUserRef = async () => await AsyncStorage.getItem(`userRef`);
 
-                    userRef.current = userLogin;
-                    navigation.navigate('Home');
-                }).catch(error => {
-                console.log(error)
-                setErrortext(error.response.data)
-            });
-            navigation.navigate('Home');
-        }
+        getUserRef().then((userStored) => {
+            if (userStored != '' && userStored != null) {
+                let userLogin = new User();
+                let user = JSON.parse(userStored);
+                userLogin.email = user.email;
+                userLogin.parola = user.parola;
+                axiosInstance.post('/user/login', userLogin)
+                    .then((response) => {
+                        userLogin = new User().deserialize(response.data)
+                        console.log(response.data)
+                        console.log(userLogin)
+
+                        userRef.current = userLogin;
+                        navigation.navigate('Main');
+                    }).catch(error => {
+                    console.log(error)
+                    setErrortext(error.response.data)
+                });
+                //navigation.navigate('Main');
+            }
+        });
     }, []);
 
     const handleLogin = () => {
@@ -69,6 +75,11 @@ const Login = ({ navigation }) => {
             let userLogin = new User();
             userLogin.email = email;
             userLogin.parola = password;
+            if(checked)
+                AsyncStorage.setItem(`userRef`, JSON.stringify({
+                    email: userLogin.email,
+                    parola: userLogin.parola
+                })).then(r => console.log(r));
             axiosInstance.post('/user/login', userLogin)
                 .then((response) => {
                 userLogin = new User().deserialize(response.data)
@@ -77,9 +88,8 @@ const Login = ({ navigation }) => {
 
                 hideDog();
                 userRef.current = userLogin;
-                if(checked)
-                    localStorage.setItem(`userRef`, JSON.stringify({email: userLogin.email, parola: userLogin.parola}));
-                navigation.navigate('Home');
+
+                navigation.navigate('Main');
             }).catch(error => {
                 console.log(error)
                 //if(error.response.status === 400) {

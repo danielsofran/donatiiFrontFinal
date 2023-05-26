@@ -1,5 +1,5 @@
 import {User} from "../model/User";
-import {View, Text, StyleSheet, Dimensions} from "react-native";
+import {View, Text, StyleSheet} from "react-native";
 import Colors from "../utils/Colors";
 import {CauzeList} from "../components/CauzeList";
 import {useEffect, useState} from "react";
@@ -25,28 +25,11 @@ const Home = ({ navigation}) => {
     }, [])
 
     return (
-        <WebNavbar navigation={navigation}>
-            <Banner active={true/*!(localStorage.getItem(`mesaje${userRef.current.id}`) === 'false')*/}></Banner>
-            <FilterMenu callFunction={setCauze}></FilterMenu>
-            {cauze.length > 0?
-                <CauzeList cauze={cauze} user={userRef.current}/>:
-                <View style={{
-                    flex: 1,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                }}>
-                    <Text style={{
-                        marginTop: 50,
-                        fontSize: 20,
-                        fontWeight: 'bold',
-                        color: '#003ea1',
-                        textAlign: 'center',
-                    }}>
-                        Nu exista cauze
-                    </Text>
-                </View>
-            }
-        </WebNavbar>
+        <>
+            <Banner active={false/*!(localStorage.getItem(`mesaje${userRef.current.id}`) === 'false')*/}></Banner>
+            <FilterMenu callFunction={setCauze} />
+            <CauzeList cauze={cauze} user={userRef.current}/>
+        </>
     );
 }
 

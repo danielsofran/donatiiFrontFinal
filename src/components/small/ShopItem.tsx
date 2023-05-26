@@ -68,6 +68,7 @@ const ShopItem = ({ item, call, setEquippedItemId, equippedItemId }) => {
     const styles = StyleSheet.create({
         container: {
             margin: 16,
+            paddingTop: 16,
             borderRadius: 16,
             height: 400,
             width: 300,
@@ -88,6 +89,7 @@ const ShopItem = ({ item, call, setEquippedItemId, equippedItemId }) => {
             width: 250,
             height: 250,
             marginBottom: 8,
+            borderRadius: 5,
         },
         level: {
             fontSize: 18,
