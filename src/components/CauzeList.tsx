@@ -4,20 +4,20 @@ import {Platform, ScrollView, View, StyleSheet} from "react-native";
 import {User} from "../model/User";
 import {useEffect, useRef} from "react";
 
-export const CauzeList = ({ cauze, user }: { cauze: Cauza[], user: User }) => {
+export const CauzeList = ({ cauze, user, updatable=false }: { cauze: Cauza[], user: User, updatable: boolean }) => {
     return (
         Platform.OS === 'web' ?
             <View style={styles.webcontainer}>
                 {cauze.map((cauza) => (
                     <View key={cauza.id} style={styles.webitem}>
-                        <CauzaPreview cauza={cauza} user={user} />
+                        <CauzaPreview cauza={cauza} updatable={updatable}/>
                     </View>
                 ))}
             </View>
             :
             <ScrollView>
                 {cauze.map((cauza) => (
-                    <CauzaPreview key={cauza.id} cauza={cauza} user={user} />
+                    <CauzaPreview key={cauza.id} cauza={cauza} updatable={updatable}/>
                 ))}
             </ScrollView>
     );

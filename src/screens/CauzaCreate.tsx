@@ -32,6 +32,8 @@ const CauzaCreate = ({ navigation }) => {
     const [loading, setLoading] = useState(false);
     const [errortext, setErrortext] = useState('');
 
+    const [selectedTag, setSelectedTag] = useState(null);
+
 
     // @ts-ignore
     const { userRef } = useAuth();
@@ -48,6 +50,14 @@ const CauzaCreate = ({ navigation }) => {
         if (interests.includes(interes)) {
             setInterests(interests.filter(item => item !== interes));
         } else {
+            if(tipCauza === 'personal case') {
+                setInterests([]);
+                if (selectedTag === interes) {
+                    setSelectedTag(null);
+                } else {
+                    setSelectedTag(interes);
+                }
+            }
             interests.push(interes);
         }
     };
@@ -238,8 +248,10 @@ const CauzaCreate = ({ navigation }) => {
 
                     {tags.map((tag) => (
                         <View key={tag.id} style={styles.checkboxContainer}>
-                            <CustomCheckbox value={false}
-                                            onValueChange={() => handleInterestChange(tag)} label={""} />
+                            <CustomCheckbox value={selectedTag === tag}
+                                            onValueChange={() => handleInterestChange(tag)} label={""}
+                                            unique={tipCauza === 'personal case'}
+                            />
                             <AnimalTag animal={tag.nume} />
                         </View>
                     ))}

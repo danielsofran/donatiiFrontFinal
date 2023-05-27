@@ -48,7 +48,7 @@ const HomeStack = ({navigation}) => {
                     title: '🏠 Home', //Set Header Title
                     headerLeft: () => <NavigationDrawerStructure navigationProps={navigation} />,
                     headerStyle: {
-                        backgroundColor: '#1e6fe9', //Set Header color
+                        backgroundColor: 'rgba(127, 127, 213, 1)', //Set Header color
                     },
                     headerTintColor: '#fff', //Set Header text color
                     headerTitleStyle: {
@@ -70,7 +70,7 @@ const CauzeleMeleStack = ({navigation}) => {
                     title: 'My Cases', //Set Header Title
                     headerLeft: () => <NavigationDrawerStructure navigationProps={navigation} />,
                     headerStyle: {
-                        backgroundColor: '#1e6fe9', //Set Header color
+                        backgroundColor: 'rgba(127, 127, 213, 1)', //Set Header color
                     },
                     headerTintColor: '#fff', //Set Header text color
                     headerTitleStyle: {
@@ -92,7 +92,7 @@ const AdaugaStack = ({navigation}) => {
                     title: 'Create a Case', //Set Header Title
                     headerLeft: () => <NavigationDrawerStructure navigationProps={navigation} />,
                     headerStyle: {
-                        backgroundColor: '#1e6fe9', //Set Header color
+                        backgroundColor: 'rgba(127, 127, 213, 1)', //Set Header color
                     },
                     headerTintColor: '#fff', //Set Header text color
                     headerTitleStyle: {
@@ -111,10 +111,10 @@ const ShopStack = ({navigation}) => {
                 name="Shop"
                 component={Shop}
                 options={{
-                    title: 'Shop', //Set Header Title
+                    title: '🛒 Shop', //Set Header Title
                     headerLeft: () => <NavigationDrawerStructure navigationProps={navigation} />,
                     headerStyle: {
-                        backgroundColor: '#1e6fe9', //Set Header color
+                        backgroundColor: 'rgba(127, 127, 213, 1)', //Set Header color
                     },
                     headerTintColor: '#fff', //Set Header text color
                     headerTitleStyle: {
@@ -136,7 +136,7 @@ const ProfilStack = ({navigation}) => {
                     title: 'Profile', //Set Header Title
                     headerLeft: () => <NavigationDrawerStructure navigationProps={navigation} />,
                     headerStyle: {
-                        backgroundColor: '#1e6fe9', //Set Header color
+                        backgroundColor: 'rgba(127, 127, 213, 1)', //Set Header color
                     },
                     headerTintColor: '#fff', //Set Header text color
                     headerTitleStyle: {
@@ -155,10 +155,10 @@ const SetariStack = ({navigation}) => {
                 name="Setari"
                 component={Setari}
                 options={{
-                    title: 'Settings', //Set Header Title
+                    title: '⚙️ Settings', //Set Header Title
                     headerLeft: () => <NavigationDrawerStructure navigationProps={navigation} />,
                     headerStyle: {
-                        backgroundColor: '#1e6fe9', //Set Header color
+                        backgroundColor: 'rgba(127, 127, 213, 1)', //Set Header color
                     },
                     headerTintColor: '#fff', //Set Header text color
                     headerTitleStyle: {
@@ -175,7 +175,7 @@ export const Main = () => {
     return (
         <Drawer.Navigator
             screenOptions={{
-                activeTintColor: '#1e6fe9',
+                activeTintColor: 'rgba(127, 127, 213, 1)',
                 itemStyle: { marginVertical: 5 },
                 headerShown: false
             }}
@@ -188,23 +188,23 @@ export const Main = () => {
             <Drawer.Screen
                 name="CauzeleMeleStack"
                 component={CauzeleMeleStack}
-                options={{drawerLabel: "My Cases"}}/>
+                options={{drawerLabel: "🐾 My Cases"}}/>
             <Drawer.Screen
                 name="AdaugaStack"
                 component={AdaugaStack}
-                options={{drawerLabel: "Create a Case"}}/>
+                options={{drawerLabel: "➕ Create a Case"}}/>
             <Drawer.Screen
                 name="ShopStack"
                 component={ShopStack}
-                options={{drawerLabel: "Shop"}}/>
+                options={{drawerLabel: "🛒 Shop"}}/>
             <Drawer.Screen
                 name="ProfilStack"
                 component={ProfilStack}
-                options={{drawerLabel: "Profile"}}/>
+                options={{drawerLabel: "👤 Profile"}}/>
             <Drawer.Screen
                 name="SetariStack"
                 component={SetariStack}
-                options={{drawerLabel: "Settings"}}/>
+                options={{drawerLabel: "⚙️ Settings"}}/>
         </Drawer.Navigator>
     )
 }

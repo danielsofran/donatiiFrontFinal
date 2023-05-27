@@ -1,26 +1,37 @@
 import React, {useRef, useState} from 'react';
-import {View, Text, StyleSheet, TouchableOpacity, Platform} from 'react-native';
+import {View, Text, StyleSheet, TouchableOpacity, Platform, Button, Alert, Animated, Modal, Image} from 'react-native';
 import Colors from "../utils/Colors";
 import PictureNavigator from "./small/PictureNavigator";
 import Progress from "./small/Progress";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import {Cauza, CauzaAdapost, CauzaPersonala, isCauzaAdapost, isCauzaPersonala} from "../model/Cauza";
+import {Cauza, isCauzaAdapost, isCauzaPersonala} from "../model/Cauza";
 import HeartsStream from "./small/HeartsStream";
 import {AnimalsTag, AnimalTag} from "./small/AnimalTag";
 import {LinearGradient} from "expo-linear-gradient";
-import {User} from "../model/User";
 import {axiosInstance} from "../api/axiosInstance";
 import {useAuth} from "../utils/UseAuth";
+import Icon from "react-native-vector-icons/FontAwesome";
+import NumberInput from "./small/NumberInput";
 
 
-const CauzaPreview = ({cauza} : {cauza: Cauza}) => {
+const CauzaPreview = ({cauza, updatable=false} : {cauza: Cauza, updatable: boolean}) => {
     // @ts-ignore
     const { userRef } = useAuth();
 
     const [liked, setLiked] = useState(userRef.current.sustineri.includes(cauza.id));
     const [nrLikes, setNrLikes] = useState(cauza.nrSustinatori)
+    const [showHearts, setShowHearts] = useState(false);
+
+    const [isExpanded, setIsExpanded] = useState(false);
+
+    const [sum, setSum] = useState(5);
+    const [currency, setCurrency] = useState('RON');
+
+    useRef(new Animated.Value(0)).current;
 
     function handleLike() {
+        if(!liked)
+            setShowHearts(true);
         setLiked(!liked);
         axiosInstance.put(`/user/like/${userRef.current.id}/${cauza.id}`).then((response) => {
             console.log(response.data)
@@ -37,12 +48,58 @@ const CauzaPreview = ({cauza} : {cauza: Cauza}) => {
         });
     }
 
+    function handleDelete() {
+        if(Platform.OS === 'web') {
+            if (window.confirm('Are you sure you want to delete this case?')) {
+                confirmedDelete();
+            }
+            return;
+        }
+        Alert.alert(
+            'Confirm Delete',
+            'Are you sure you want to delete this case?',
+            [
+                { text: 'Cancel', style: 'cancel' },
+                { text: 'Delete', style: 'destructive', onPress: () =>
+                    {
+                        confirmedDelete();
+                    }},
+            ],
+            { cancelable: false }
+        );
+    }
+
+    function confirmedDelete() {
+        axiosInstance.delete(`/cauza/${cauza.id}`).then((response) => {
+            console.log(response.data)
+        }).catch(error => {
+            console.log(error.response.data)
+        });
+    }
+
+    function handleDonate() {
+        setIsExpanded(!isExpanded);
+    }
+
+    function donate() {
+        axiosInstance.put(`/cauza/donate/${cauza.id}/${sum}/${currency}`).then((response) => {
+            console.log(response.data);
+            setIsExpanded(false);
+        }).catch(error => {
+            console.log(error.response.data);
+            setIsExpanded(false);
+        });
+    }
+
     return (
-        <LinearGradient colors={['rgba(27,0,255,0.29)', 'rgba(164,167,227,0.63)']}
+        <View>
+        <LinearGradient colors={['rgba(127, 127, 213, 0.5)', 'rgba(134, 168, 231, 0.5)', 'rgba(145, 234, 228, 0.5)']}
+                        start={{ x: 0.5, y: 1 }}
+                        end={{ x: 0.5, y: 0 }}
                         style={styles.container}>
             <View>
                 <LinearGradient
-                    colors={['rgba(71,49,225,0.7)', 'rgba(100,82,217,0.45)', 'rgba(69,57,166,0.25)']}
+                    colors={['rgba(127, 127, 213, 0.7)', 'rgba(134, 168, 231, 0.7)', 'rgba(145, 234, 228, 0.7)']}
                     start={[0, 0]} end={[1, 1]}
                     style={{overflow: 'hidden', marginBottom: 10, borderRadius: 20}}
                 >
@@ -98,9 +155,44 @@ const CauzaPreview = ({cauza} : {cauza: Cauza}) => {
                         </View>
                     </View>
                 </View>
-                {liked && <HeartsStream loading={false}></HeartsStream>}
+                {showHearts && <HeartsStream loading={false}></HeartsStream>}
+                {updatable &&
+                    <TouchableOpacity style={styles.delete} onPress={handleDelete}>
+                        <Icon name="trash" size={30} color="purple" />
+                    </TouchableOpacity>
+                }
             </View>
         </LinearGradient>
+            {updatable ||
+                <TouchableOpacity style={styles.donate} onPress={handleDonate}>
+                    <View style={styles.button}>
+                        <Icon name="gift" size={30} color="purple" />
+                        <Text style={styles.donateText}> DONATE </Text>
+                        <Icon name="gift" size={30} color="purple" />
+                    </View>
+                </TouchableOpacity>
+            }
+            {isExpanded &&
+                <Modal transparent={true} animationType={'slide'} visible={isExpanded}>
+                    <View style={styles.slidingView}>
+                        <View style={styles.activityIndicatorWrapper}>
+                            <Text style={styles.donateTitle}>Donate for {cauza.titlu}</Text>
+                            <View style={{
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                                width: '60%',
+                            }}>
+                                <Text style={{fontSize: 18}}>Amount: </Text>
+                                <NumberInput minvalue={1} maxvalue={1000} initial={5} onValueChange={setSum}></NumberInput>
+                            </View>
+                            <TouchableOpacity style={styles.donateButton} onPress={donate}>
+                                <Text style={styles.donateText}>Register Donation</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </Modal>
+            }
+        </View>
     );
 };
 
@@ -117,6 +209,7 @@ const styles = StyleSheet.create({
         alignItems: 'stretch',
         //backgroundColor: 'rgba(69,57,166,0.25)',
         margin: 10,
+        marginBottom: 0,
         borderWidth: 0,
         borderColor: Colors.Black,
         borderTopLeftRadius: 20,
@@ -188,8 +281,65 @@ const styles = StyleSheet.create({
         alignItems: 'flex-end',
         paddingRight: 10,
         paddingBottom: 5,
+    },
+    delete: {
+        opacity: 0.4,
+        position: 'absolute',
+        top: 8,
+        left: 10,
+    },
+    donate: {
+        marginBottom: 5,
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        opacity: 0.4,
+    },
+    donateText: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        color: 'purple',
+    },
+    button: {
+        backgroundColor: 'rgba(145,234,228,1)',
+        padding: 5,
+        paddingHorizontal: 15,
+        borderBottomRightRadius: 20,
+        borderBottomLeftRadius: 20,
+        borderRadius: 20,
+        flexDirection: 'row',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.5,
+        shadowRadius: 10,
+    },
+    slidingView: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        flexDirection: 'column',
+        backgroundColor: 'rgba(0,0,0,0.75)',
+    },
+    activityIndicatorWrapper: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-around',
+        backgroundColor: 'rgb(126,126,126)',
+        borderRadius: 10,
+        paddingHorizontal: 10,
+    },
+    donateButton: {
+        backgroundColor: 'rgba(0,0,0,0.25)',
+        borderRadius: 20,
+        padding: 5,
+        paddingHorizontal: 15,
+    },
+    donateTitle: {
+        fontSize: 28,
+        fontWeight: 'bold',
+        color: 'silver',
     }
-
 
 });
 

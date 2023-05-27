@@ -74,7 +74,7 @@ const FilterMenu = ({ callFunction }) => {
     return (
         <View style={styles.container}>
             <TouchableOpacity onPress={() => setIsOpen(!isOpen)} style={styles.openButton}>
-                <Text style={styles.buttonText}>Filtrare</Text>
+                <Text style={styles.buttonText}>Filter</Text>
             </TouchableOpacity>
             {isOpen && (
                 <View style={{
@@ -85,7 +85,7 @@ const FilterMenu = ({ callFunction }) => {
                 }}>
                     <View style={styles.element}>
                         <TouchableOpacity onPress={() => setIsOpenLocation(!isOpenLocation)} style={[styles.button, {backgroundColor: 'rgba(62,39,231,0.68)'}]}>
-                            <Text style={styles.buttonText}>Locatie</Text>
+                            <Text style={styles.buttonText}>Location</Text>
                         </TouchableOpacity>
                         <View style={styles.listContainer}>
                             {isOpenLocation && (
@@ -94,7 +94,7 @@ const FilterMenu = ({ callFunction }) => {
                                     <Text style={{
                                         fontSize: 14,
                                         color: 'green',
-                                    }} onPress={handleLocation}>Locatia mea curenta</Text>
+                                    }} onPress={handleLocation}>My current location</Text>
                                 </View>
                             )}
                         </View>
@@ -102,7 +102,7 @@ const FilterMenu = ({ callFunction }) => {
 
                     <View style={styles.element}>
                         <TouchableOpacity onPress={() => setIsOpenSum(!isOpenSum)} style={[styles.button, {backgroundColor: 'rgba(55,32,236,0.56)'}]}>
-                            <Text style={styles.buttonText}>Suma necesara</Text>
+                            <Text style={styles.buttonText}>Required sum</Text>
                         </TouchableOpacity>
                         <View style={styles.listContainer}>
                             {isOpenSum && (
@@ -111,7 +111,7 @@ const FilterMenu = ({ callFunction }) => {
                                         flexDirection: 'row',
                                         alignItems: 'center',
                                     }}>
-                                        <Text>Minim: </Text>
+                                        <Text>Min: </Text>
                                         <NumberInput minvalue={0} maxvalue={sumaMax} onValueChange={setSumaMin} initial={0}/>
                                     </View>
                                     <View style={{
@@ -119,7 +119,7 @@ const FilterMenu = ({ callFunction }) => {
                                         alignItems: 'center',
                                         marginTop: 10,
                                     }}>
-                                        <Text>Maxim: </Text>
+                                        <Text>Max: </Text>
                                         <NumberInput minvalue={sumaMin} maxvalue={1000000000} onValueChange={setSumaMax} initial={1000000000}/>
                                     </View>
                                 </View>
@@ -129,7 +129,7 @@ const FilterMenu = ({ callFunction }) => {
 
                     <View style={styles.element}>
                         <TouchableOpacity onPress={() => setIsOpenTags(!isOpenTags)} style={[styles.button, {backgroundColor: 'rgba(48,24,241,0.44)'}]}>
-                            <Text style={styles.buttonText}>Taguri animale</Text>
+                            <Text style={styles.buttonText}>Animal tags</Text>
                         </TouchableOpacity>
                         <View style={styles.listContainer}>
                             {isOpenTags && (
@@ -151,7 +151,7 @@ const FilterMenu = ({ callFunction }) => {
 
                     <View style={styles.element}>
                         <TouchableOpacity onPress={() => setIsOpenOthers(!isOpenOthers)} style={[styles.button, {backgroundColor: 'rgba(40,15,246,0.32)'}]}>
-                            <Text style={styles.buttonText}>Alte criterii</Text>
+                            <Text style={styles.buttonText}>Others</Text>
                         </TouchableOpacity>
                         <View style={styles.listContainer}>
                             {isOpenOthers && (
@@ -162,7 +162,7 @@ const FilterMenu = ({ callFunction }) => {
                                     }}>
                                         <CustomCheckbox value={false}
                                                         onValueChange={() => setShowCompleted(!showCompleted)} label={''}/>
-                                        <Text style={{fontSize: 14, textAlign: 'center'}}>Ascunde cauzele rezolvate</Text>
+                                        <Text style={{fontSize: 14, textAlign: 'center'}}>Hide solved cases</Text>
                                     </View>
 
                                     <View style={{
@@ -172,7 +172,7 @@ const FilterMenu = ({ callFunction }) => {
                                     }}>
                                         <CustomCheckbox value={false}
                                                         onValueChange={() => setDoarAdaport(!doarAdapost)} label={''}/>
-                                        <Text style={{fontSize: 14, textAlign: 'center'}}>Arata doar adaposturi</Text>
+                                        <Text style={{fontSize: 14, textAlign: 'center'}}>Show only shelters</Text>
                                     </View>
                                 </View>
                             )}
@@ -180,7 +180,7 @@ const FilterMenu = ({ callFunction }) => {
                     </View>
 
                     <TouchableOpacity onPress={handleFilter} style={[styles.button, {backgroundColor: 'rgba(27,0,255,0.3)', marginLeft: 10,}]}>
-                        <Text style={styles.buttonText}>Cauta</Text>
+                        <Text style={styles.buttonText}>Search</Text>
                     </TouchableOpacity>
                 </View>
             )}

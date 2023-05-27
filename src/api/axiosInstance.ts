@@ -1,6 +1,6 @@
 import * as axiosLib from "axios";
 
-export const API_URL = `http://192.168.43.10:8080`;
+export const API_URL = `http://192.168.0.107:8080`;
 
 export const axiosInstance = axiosLib.default.create({
     baseURL: API_URL,

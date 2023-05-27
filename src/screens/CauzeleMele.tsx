@@ -1,13 +1,7 @@
-import {User} from "../model/User";
-import {View, Text, StyleSheet} from "react-native";
+import {StyleSheet} from "react-native";
 import Colors from "../utils/Colors";
 import {CauzeList} from "../components/CauzeList";
-import {useEffect, useState} from "react";
-import {axiosInstance} from "../api/axiosInstance";
-import {Cauza, deserializeCauzaArray} from "../model/Cauza";
-import WebNavbar from "../components/navbar/Web";
 import {useAuth} from "../utils/UseAuth";
-import {Banner} from "../components/small/Banner";
 
 const CauzeleMele = ({ navigation }) => {
 
@@ -15,7 +9,7 @@ const CauzeleMele = ({ navigation }) => {
     const { userRef } = useAuth();
 
     return (
-        <CauzeList cauze={userRef.current.cauze} user={userRef.current}/>
+        <CauzeList cauze={userRef.current.cauze} user={userRef.current} updatable={true}/>
     );
 }
 

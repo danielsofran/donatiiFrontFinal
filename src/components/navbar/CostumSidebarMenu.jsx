@@ -52,7 +52,7 @@ const CustomSidebarMenu = (props) => {
     return (
         <SafeAreaView>
             {/*Top Large Image */}
-            <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', margin: 30 }}>
+            <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', margin: 30, marginTop: 60 }}>
                 <ImageLayer images={userRef.current.echipate}/>
             </View>
             <ScrollView {...props}>
