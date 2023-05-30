@@ -173,8 +173,14 @@ const CauzaPreview = ({cauza, updatable=false} : {cauza: Cauza, updatable: boole
                 </TouchableOpacity>
             }
             {isExpanded &&
-                <Modal transparent={true} animationType={'slide'} visible={isExpanded}>
+                <Modal transparent={true} animationType={'fade'} visible={isExpanded}>
                     <View style={styles.slidingView}>
+                        <Image style={styles.background}
+                               source={
+                            Platform.OS === 'web' ?
+                            require('../../assets/animals-background.jpg'):
+                            require('../../assets/mobile-background.jpg')
+                        }/>
                         <View style={styles.activityIndicatorWrapper}>
                             <Text style={styles.donateTitle}>Donate for {cauza.titlu}</Text>
                             <View style={{
@@ -186,7 +192,10 @@ const CauzaPreview = ({cauza, updatable=false} : {cauza: Cauza, updatable: boole
                                 <NumberInput minvalue={1} maxvalue={1000} initial={5} onValueChange={setSum}></NumberInput>
                             </View>
                             <TouchableOpacity style={styles.donateButton} onPress={donate}>
-                                <Text style={styles.donateText}>Register Donation</Text>
+                                <Text style={styles.donateButtonText}>Register Donation</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.cancelButton} onPress={() => setIsExpanded(false)}>
+                                <Text style={styles.cancelButtonText}>Cancel</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -317,28 +326,52 @@ const styles = StyleSheet.create({
     slidingView: {
         flex: 1,
         alignItems: 'center',
-        justifyContent: 'center',
         flexDirection: 'column',
-        backgroundColor: 'rgba(0,0,0,0.75)',
+        justifyContent: 'center',
+        backgroundColor: '#A8E4FC',
     },
     activityIndicatorWrapper: {
+        marginTop: -50,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-around',
-        backgroundColor: 'rgb(126,126,126)',
         borderRadius: 10,
         paddingHorizontal: 10,
     },
-    donateButton: {
-        backgroundColor: 'rgba(0,0,0,0.25)',
-        borderRadius: 20,
-        padding: 5,
-        paddingHorizontal: 15,
-    },
     donateTitle: {
-        fontSize: 28,
+        textAlign: 'center',
+        fontSize: 32,
         fontWeight: 'bold',
-        color: 'silver',
+        color: Platform.OS === 'web'? '#696969': '#6868ff',
+        marginBottom: 50,
+    },
+    donateButton: {
+        backgroundColor: '#696969',
+        borderRadius: 20,
+        padding: 10,
+        paddingHorizontal: 20,
+        marginTop: 10,
+    },
+    donateButtonText: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        color: '#E6E6FA',
+    },
+    background: {
+        position: 'absolute',
+        width: '100%',
+        height: '100%',
+        resizeMode: 'stretch',
+    },
+    cancelButton: {
+        backgroundColor: 'transparent',
+        padding: 10,
+        paddingHorizontal: 20,
+    },
+    cancelButtonText: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        color: '#696969',
     }
 
 });

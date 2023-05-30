@@ -1,23 +1,9 @@
 import React, {createContext, useRef, useState} from 'react';
 import {User} from "../../model/User";
-import {useAuth} from "./UseAuth";
 import {axiosInstance} from "../../api/axiosInstance";
 import {Cauza, deserializeCauzaArray} from "../../model/Cauza";
 
 export const UserContext = createContext({});
-
-const UserDataProvider = ({ children }) => {
-    // @ts-ignore
-    const { userRef } = useAuth();
-    const [user, setUser] = useState(userRef.current);
-
-    return (
-        <UserContext.Provider value={{ user, setUser }}>
-            {children}
-        </UserContext.Provider>
-    );
-}
-
 export const UserProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [allCases, setAllCases] = useState([]);
