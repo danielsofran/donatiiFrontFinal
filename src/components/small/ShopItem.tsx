@@ -2,7 +2,7 @@ import React, {useContext, useEffect, useState} from 'react';
 import {View, Text, Image, StyleSheet, TouchableOpacity} from 'react-native';
 import {API_URL, axiosInstance} from "../../api/axiosInstance";
 import {Costumizabil, CostumizabilState} from "../../model/Costumizabil";
-import {UserContext} from "../../utils/UserContext";
+import {UserContext} from "../../utils/context/UserContext";
 
 const ShopItem = ({ item, call, setEquippedItemId, equippedItemId }) => {
     // @ts-ignore

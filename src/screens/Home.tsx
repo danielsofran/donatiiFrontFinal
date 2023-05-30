@@ -1,22 +1,23 @@
 import {User} from "../model/User";
 import {View, Text, StyleSheet} from "react-native";
-import Colors from "../utils/Colors";
+import Colors from "../utils/enum/Colors";
 import {CauzeList} from "../components/CauzeList";
 import {useEffect, useState} from "react";
 import {axiosInstance} from "../api/axiosInstance";
 import {Cauza, deserializeCauzaArray} from "../model/Cauza";
 import WebNavbar from "../components/navbar/Web";
-import {useAuth} from "../utils/UseAuth";
+import {useAuth} from "../utils/context/UseAuth";
 import {Banner} from "../components/small/Banner";
 import FilterMenu from "../components/small/FilterMenu";
 
-const Home = ({ navigation}) => {
+const Home = () => {
     const [cauze, setCauze] = useState<Cauza[]>([]);
 
     // @ts-ignore
-    const { userRef } = useAuth();
+    const { userRef, allCases, myCases, updateUser } = useAuth();
 
     useEffect(() => {
+        setCauze(allCases);
         axiosInstance.get('/cauza').then((response) => {
             let cauze: Cauza[] = deserializeCauzaArray(response.data);
             console.log(cauze);
@@ -28,7 +29,7 @@ const Home = ({ navigation}) => {
         <>
             <Banner active={false/*!(localStorage.getItem(`mesaje${userRef.current.id}`) === 'false')*/}></Banner>
             <FilterMenu callFunction={setCauze} />
-            <CauzeList cauze={cauze} user={userRef.current}/>
+            <CauzeList cauze={cauze} user={userRef.current} updatable={false}/>
         </>
     );
 }

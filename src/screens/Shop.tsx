@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useRef} from 'react';
 import {ScrollView, StyleSheet, View, Image, Text} from 'react-native';
 import ShopItem from "../components/small/ShopItem";
-import {UserContext} from "../utils/UserContext";
+import {UserContext} from "../utils/context/UserContext";
 import {axiosInstance} from "../api/axiosInstance";
 import {Costumizabil} from "../model/Costumizabil";
 import ImageLayer from "../components/small/ImageLayer";

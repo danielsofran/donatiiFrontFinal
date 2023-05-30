@@ -1,7 +1,7 @@
 import {View, Text, StyleSheet, TouchableOpacity, Platform} from "react-native";
 import React, {useEffect, useState} from "react";
-import {useAuth} from "../utils/UseAuth";
-import Colors from "../utils/Colors";
+import {useAuth} from "../utils/context/UseAuth";
+import Colors from "../utils/enum/Colors";
 import WebNavbar from "../components/navbar/Web";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 

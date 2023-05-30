@@ -2,16 +2,16 @@ import React, {useContext, useEffect, useRef, useState} from 'react';
 import {View, Text, TextInput, TouchableOpacity, StyleSheet, Platform, ScrollView} from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import CustomCheckbox from "../components/small/CustomCheckbox";
-import Colors from "../utils/Colors";
+import Colors from "../utils/enum/Colors";
 import Loader from "../components/small/Loader";
 import {TagAnimal} from "../model/TagAnimal";
-import Animal from "../utils/AnimalTagsEmojies";
+import Animal from "../utils/enum/AnimalTagsEmojies";
 import PicturePicker from "../components/small/PicturePicker";
 import { AnimalTag } from "../components/small/AnimalTag";
 import {API_URL, axiosInstance} from "../api/axiosInstance";
 import {CauzaAdapost, CauzaPersonala} from "../model/Cauza";
 import {User} from "../model/User";
-import {useAuth} from "../utils/UseAuth";
+import {useAuth} from "../utils/context/UseAuth";
 import WebNavbar from '../components/navbar/Web';
 
 const CauzaCreate = ({ navigation }) => {
@@ -119,6 +119,8 @@ const CauzaCreate = ({ navigation }) => {
 
                 console.log('Cauza adaugata cu succes');
                 cauza.id = response.data.id;
+                userRef.current.cauze.push(cauza);
+                cauza.id = response.data.id;
                 const formData = new FormData();
                 Promise.all(
                     images.map((image, index) =>
@@ -158,7 +160,7 @@ const CauzaCreate = ({ navigation }) => {
                     fetch(API_URL + '/cauza/saveImages/' + cauza.id, {
                         method: 'POST',
                         headers: {
-                            'Content-Type': 'multipart/form-data',
+                            //'Content-Type': 'multipart/form-data',
                             'Accept': 'application/json'
                         },
                         body: formData
@@ -170,7 +172,18 @@ const CauzaCreate = ({ navigation }) => {
                         console.error(error.response.data)
                     })
 
+                }).then(() => {
+                    let cauzaid = response.data.id;
+                    axiosInstance.get('/cauza/' + cauzaid).then((response) => {
+                        console.log(response.data);
+                        userRef.current.cauze.push(response.data);
+                        navigation.navigate('Home');
+                    }).catch(error => {
+                        console.error("get one cauza after image save, CauzaCreate")
+                        console.error(error.response.data)
+                    });
                 });
+
                 //CAUZA CREATA
             }).catch(error => {
                 console.error(error.response.data)

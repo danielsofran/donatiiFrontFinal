@@ -1,8 +1,8 @@
 import React, {useEffect} from 'react';
 import {View, Image} from 'react-native';
-import Colors from "../../utils/Colors";
+import Colors from "../../utils/enum/Colors";
 import {API_URL} from "../../api/axiosInstance";
-import {useAuth} from "../../utils/UseAuth";
+import {useAuth} from "../../utils/context/UseAuth";
 import {Costumizabil} from "../../model/Costumizabil";
 
 const ImageLayer = ({ images, size=200 } : {images: Costumizabil[], size: number|string}) => {

@@ -6,7 +6,7 @@ import {axiosInstance} from "../../api/axiosInstance";
 import {TagAnimal} from "../../model/TagAnimal";
 import CustomCheckbox from "./CustomCheckbox";
 import {AnimalTag} from "./AnimalTag";
-import colors from "../../utils/Colors";
+import colors from "../../utils/enum/Colors";
 import {Cauza, deserializeCauzaArray} from "../../model/Cauza";
 
 

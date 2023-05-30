@@ -1,12 +1,12 @@
 import React, {useContext, useState} from 'react';
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import Colors from "../utils/Colors";
+import Colors from "../utils/enum/Colors";
 import Login from "./Login";
 import Loader from "../components/small/Loader";
 import {isValidEmail} from "../utils/RegexEmail";
 import {User} from "../model/User";
 import {axiosInstance} from "../api/axiosInstance";
-import { UserContext } from '../utils/UserContext';
+import { UserContext } from '../utils/context/UserContext';
 
 const Register = ({ navigation }) => {
     const [username, setUsername] = useState('');
@@ -16,7 +16,7 @@ const Register = ({ navigation }) => {
     const [errortext, setErrortext] = useState('');
 
     // @ts-ignore
-    const { userRef } = useContext(UserContext);
+    const { userRef, updateUser } = useContext(UserContext);
 
     const hideDog = () => {
         setTimeout(() => setLoading(false), 0)
@@ -48,8 +48,9 @@ const Register = ({ navigation }) => {
 
                     hideDog();
                     userRef.current = userRegister;
+                    updateUser();
                     //localStorage.setItem(`userRef`, JSON.stringify({email: userRegister.email, parola: userRegister.parola}));
-                    navigation.navigate('Home');
+                    navigation.navigate('Main');
                 }).catch(error => {
                 console.log(error)
                 //if(error.response.status === 400) {

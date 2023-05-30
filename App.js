@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {Platform, StyleSheet, Text, View} from 'react-native';
 import 'react-native-gesture-handler';
 import {createStackNavigator} from "@react-navigation/stack";
@@ -8,7 +8,7 @@ import Register from "./src/screens/Register";
 import Home from "./src/screens/Home";
 import CauzaCreate from "./src/screens/CauzaCreate";
 import ProfileConfig from "./src/screens/ProfileConfig";
-import {UserProvider} from "./src/utils/UserContext";
+import {UserContext, UserProvider} from "./src/utils/context/UserContext";
 import {Setari} from "./src/screens/Setari";
 import CauzeleMele from "./src/screens/CauzeleMele";
 import {Main} from "./Main";

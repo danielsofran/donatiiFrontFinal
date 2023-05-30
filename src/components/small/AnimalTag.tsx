@@ -1,5 +1,5 @@
 import { StyleSheet, View, Text } from "react-native";
-import Animal from "../../utils/AnimalTagsEmojies";
+import Animal from "../../utils/enum/AnimalTagsEmojies";
 
 
 export const AnimalTag = ({ animal }: { animal: string }) => {

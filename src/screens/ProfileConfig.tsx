@@ -2,11 +2,11 @@ import React, {useEffect, useState} from 'react';
 import {View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView} from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import CustomCheckbox from "../components/small/CustomCheckbox";
-import Colors from "../utils/Colors";
+import Colors from "../utils/enum/Colors";
 import Loader from "../components/small/Loader";
-import Animal from "../utils/AnimalTagsEmojies";
+import Animal from "../utils/enum/AnimalTagsEmojies";
 import {isValidEmail} from "../utils/RegexEmail";
-import {useAuth} from "../utils/UseAuth";
+import {useAuth} from "../utils/context/UseAuth";
 import {axiosInstance} from "../api/axiosInstance";
 import {TagAnimal} from "../model/TagAnimal";
 import {AnimalTag} from "../components/small/AnimalTag";
@@ -26,7 +26,7 @@ const ProfileConfig = ({ navigation }) => {
     const [errorColor, setErrorColor] = useState('red');
 
     // @ts-ignore
-    const { userRef } = useAuth();
+    const { userRef, updateUser } = useAuth();
 
 
     useEffect(() => {
@@ -82,6 +82,7 @@ const ProfileConfig = ({ navigation }) => {
                 setErrortext('Profile updated successfully');
                 alert('Profile updated successfully');
                 setLoading(false);
+                updateUser();
             }).catch(error => {
                 console.log(error.response.data);
                 alert('Error updating profile')

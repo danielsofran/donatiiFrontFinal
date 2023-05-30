@@ -1,13 +1,13 @@
 import React, {useContext, useEffect, useState} from 'react';
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import Colors from "../utils/Colors";
+import Colors from "../utils/enum/Colors";
 import Register from "./Register";
 import Loader from "../components/small/Loader";
 import {isValidEmail} from "../utils/RegexEmail";
 import {axiosInstance} from "../api/axiosInstance";
 import {User} from "../model/User";
-import {useAuth} from "../utils/UseAuth";
-import {UserContext} from "../utils/UserContext";
+import {useAuth} from "../utils/context/UseAuth";
+import {UserContext} from "../utils/context/UserContext";
 import { Checkbox, Text as PaperText } from 'react-native-paper';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -20,7 +20,7 @@ const Login = ({ navigation }) => {
     const [checked, setChecked] = useState(false);
 
     // @ts-ignore
-    const { userRef } = useContext(UserContext);
+    const { userRef, updateUser } = useContext(UserContext);
 
     const handleCheckboxToggle = () => {
         setChecked(!checked);
@@ -46,6 +46,7 @@ const Login = ({ navigation }) => {
                         console.log(userLogin)
 
                         userRef.current = userLogin;
+                        updateUser();
                         navigation.navigate('Main');
                     }).catch(error => {
                     console.log(error)
@@ -88,6 +89,7 @@ const Login = ({ navigation }) => {
 
                 hideDog();
                 userRef.current = userLogin;
+                updateUser();
 
                 navigation.navigate('Main');
             }).catch(error => {

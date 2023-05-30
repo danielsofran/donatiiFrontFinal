@@ -13,6 +13,17 @@ import Shop from "./src/screens/Shop";
 const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
 
+const getSymbol = (screen) => {
+    switch (screen) {
+        case 'Home': return '🏠';
+        case 'CauzeleMele': return '🐾';
+        case 'Adauga': return '➕';
+        case 'Profile': return '👤';
+        case 'Setari': return '⚙';
+        case 'Shop': return '🛒';
+    }
+}
+
 const NavigationDrawerStructure = (props) => {
     //Structure for the navigatin Drawer
     const toggleDrawer = () => {
@@ -45,7 +56,7 @@ const HomeStack = ({navigation}) => {
                 name="Home"
                 component={Home}
                 options={{
-                    title: '🏠 Home', //Set Header Title
+                    title: getSymbol('Home')+' Home', //Set Header Title
                     headerLeft: () => <NavigationDrawerStructure navigationProps={navigation} />,
                     headerStyle: {
                         backgroundColor: 'rgba(127, 127, 213, 1)', //Set Header color
@@ -67,7 +78,7 @@ const CauzeleMeleStack = ({navigation}) => {
                 name="CauzeleMele"
                 component={CauzeleMele}
                 options={{
-                    title: 'My Cases', //Set Header Title
+                    title: getSymbol('CauzeleMele')+' My Cases', //Set Header Title
                     headerLeft: () => <NavigationDrawerStructure navigationProps={navigation} />,
                     headerStyle: {
                         backgroundColor: 'rgba(127, 127, 213, 1)', //Set Header color
@@ -89,7 +100,7 @@ const AdaugaStack = ({navigation}) => {
                 name="Adauga"
                 component={CauzaCreate}
                 options={{
-                    title: 'Create a Case', //Set Header Title
+                    title: getSymbol('Adauga')+' Create a Case', //Set Header Title
                     headerLeft: () => <NavigationDrawerStructure navigationProps={navigation} />,
                     headerStyle: {
                         backgroundColor: 'rgba(127, 127, 213, 1)', //Set Header color
@@ -111,7 +122,7 @@ const ShopStack = ({navigation}) => {
                 name="Shop"
                 component={Shop}
                 options={{
-                    title: '🛒 Shop', //Set Header Title
+                    title: getSymbol('Shop')+' Shop', //Set Header Title
                     headerLeft: () => <NavigationDrawerStructure navigationProps={navigation} />,
                     headerStyle: {
                         backgroundColor: 'rgba(127, 127, 213, 1)', //Set Header color
@@ -133,7 +144,7 @@ const ProfilStack = ({navigation}) => {
                 name="Profil"
                 component={ProfileConfig}
                 options={{
-                    title: 'Profile', //Set Header Title
+                    title: getSymbol('Profile')+' Profile', //Set Header Title
                     headerLeft: () => <NavigationDrawerStructure navigationProps={navigation} />,
                     headerStyle: {
                         backgroundColor: 'rgba(127, 127, 213, 1)', //Set Header color
@@ -155,7 +166,7 @@ const SetariStack = ({navigation}) => {
                 name="Setari"
                 component={Setari}
                 options={{
-                    title: '⚙️ Settings', //Set Header Title
+                    title: getSymbol('Setari')+'️ Settings', //Set Header Title
                     headerLeft: () => <NavigationDrawerStructure navigationProps={navigation} />,
                     headerStyle: {
                         backgroundColor: 'rgba(127, 127, 213, 1)', //Set Header color
@@ -184,27 +195,27 @@ export const Main = () => {
             <Drawer.Screen
                 name="HomeStack"
                 component={HomeStack}
-                options={{drawerLabel: "🏠 Home"}}/>
+                options={{drawerLabel: getSymbol("Home")+" Home"}}/>
             <Drawer.Screen
                 name="CauzeleMeleStack"
                 component={CauzeleMeleStack}
-                options={{drawerLabel: "🐾 My Cases"}}/>
+                options={{drawerLabel: getSymbol("CauzeleMele")+" My Cases"}}/>
             <Drawer.Screen
                 name="AdaugaStack"
                 component={AdaugaStack}
-                options={{drawerLabel: "➕ Create a Case"}}/>
+                options={{drawerLabel: getSymbol("Adauga")+" Create a Case"}}/>
             <Drawer.Screen
                 name="ShopStack"
                 component={ShopStack}
-                options={{drawerLabel: "🛒 Shop"}}/>
+                options={{drawerLabel: getSymbol("Shop")+" Shop"}}/>
             <Drawer.Screen
                 name="ProfilStack"
                 component={ProfilStack}
-                options={{drawerLabel: "👤 Profile"}}/>
+                options={{drawerLabel: getSymbol("Profile")+" Profile"}}/>
             <Drawer.Screen
                 name="SetariStack"
                 component={SetariStack}
-                options={{drawerLabel: "⚙️ Settings"}}/>
+                options={{drawerLabel: getSymbol("Setari")+"️ Settings"}}/>
         </Drawer.Navigator>
     )
 }

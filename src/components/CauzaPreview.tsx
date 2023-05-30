@@ -1,6 +1,6 @@
 import React, {useRef, useState} from 'react';
 import {View, Text, StyleSheet, TouchableOpacity, Platform, Button, Alert, Animated, Modal, Image} from 'react-native';
-import Colors from "../utils/Colors";
+import Colors from "../utils/enum/Colors";
 import PictureNavigator from "./small/PictureNavigator";
 import Progress from "./small/Progress";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -9,7 +9,7 @@ import HeartsStream from "./small/HeartsStream";
 import {AnimalsTag, AnimalTag} from "./small/AnimalTag";
 import {LinearGradient} from "expo-linear-gradient";
 import {axiosInstance} from "../api/axiosInstance";
-import {useAuth} from "../utils/UseAuth";
+import {useAuth} from "../utils/context/UseAuth";
 import Icon from "react-native-vector-icons/FontAwesome";
 import NumberInput from "./small/NumberInput";
 
