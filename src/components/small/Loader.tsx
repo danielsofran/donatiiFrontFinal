@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, View, Modal, Image, ActivityIndicator} from 'react-native';
+import {StyleSheet, View, Modal, Image} from 'react-native';
 
 const Loader = (props) => {
     const {loading} = props;

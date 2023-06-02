@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
@@ -7,13 +7,23 @@ const CustomCheckbox = ({ label, value, onValueChange, unique=false }) => {
 
     const handlePress = () => {
         const newValue = !checked;
-        if(!unique)setChecked(newValue);
-        onValueChange(newValue);
+        setChecked(newValue);
+        if (!unique) {
+            onValueChange(newValue);
+        } else {
+            //if (newValue) {
+                onValueChange(value);
+            //}
+        }
     };
+
+    useEffect(() => {
+        setChecked(value);
+    }, [value]);
 
     return (
         <TouchableOpacity style={styles.checkboxContainer} onPress={handlePress}>
-            <View style={[styles.checkbox, checked && styles.checkedCheckbox]}>
+            <View style={[styles.checkbox, (unique?value:checked) && styles.checkedCheckbox]}>
                 {(unique?value:checked) && <Icon name="check" size={16} color="white" />}
             </View>
             <Text>{label}</Text>

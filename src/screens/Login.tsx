@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useState} from 'react';
-import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import {Image, StyleSheet, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import Colors from "../utils/enum/Colors";
 import Register from "./Register";
 import Loader from "../components/small/Loader";
@@ -18,6 +18,8 @@ const Login = ({ navigation }) => {
     const [errortext, setErrortext] = useState('');
 
     const [checked, setChecked] = useState(false);
+
+    const [isUserPresent, setIsUserPresent] = useState(false);
 
     // @ts-ignore
     const { userRef, updateUser } = useContext(UserContext);
@@ -53,6 +55,9 @@ const Login = ({ navigation }) => {
                     setErrortext(error.response.data)
                 });
                 //navigation.navigate('Main');
+            }
+            else {
+                setIsUserPresent(true);
             }
         });
     }, []);
@@ -107,6 +112,7 @@ const Login = ({ navigation }) => {
     };
 
     return (
+        isUserPresent &&
         <View style={styles.container}>
             <Loader loading={loading} />
             <Text style={styles.title}>Login</Text>

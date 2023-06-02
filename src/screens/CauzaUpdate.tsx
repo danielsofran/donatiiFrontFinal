@@ -10,25 +10,28 @@ import { AnimalTag } from "../components/small/AnimalTag";
 import {API_URL, axiosInstance} from "../api/axiosInstance";
 import {CauzaAdapost, CauzaPersonala} from "../model/Cauza";
 import {useAuth} from "../utils/context/UseAuth";
+import colors from "../utils/enum/Colors";
 
-const CauzaCreate = ({ navigation }) => {
-    const [title, setTitle] = useState("");
-    const [location, setLocation] = useState("");
-    const [description, setDescription] = useState("");
-    const [sumTarget, setTarget] = useState(0);
-    const [tipCauza, setTipCauza] = useState("personal case");
+const CauzaUpdate = ({ navigation, route }) => {
+    const { cauza } = route.params;
+
+    const [title, setTitle] = useState(cauza.titlu);
+    const [location, setLocation] = useState(cauza.locatie);
+    const [description, setDescription] = useState(cauza.descriere);
+    const [sumTarget, setTarget] = useState(cauza.sumaMinima);
+    const [tipCauza] = useState(cauza.varstaAnimal ? 'personal case' : 'shelter case');
     const [tags, setTags] = useState<TagAnimal[]>([]);
-    const [images, setImages] = useState([]);
-    const [interests, setInterests] = useState([]);
+    const [images, setImages] = useState(cauza.poze);
+    const [interests, setInterests] = useState(cauza.tagAnimal ? [cauza.tagAnimal] : cauza.taguri);
 
-    const [name, setName] = useState("");
-    const [age, setAge] = useState(0);
-    const [race, setRace] = useState("");
+    const [name, setName] = useState(cauza.varstaAnimal ? cauza.numeAnimal : cauza.nume);
+    const [age, setAge] = useState(cauza.varstaAnimal ? cauza.varstaAnimal : 0);
+    const [race, setRace] = useState(cauza.varstaAnimal ? cauza.rasaAnimal : '');
 
     const [loading, setLoading] = useState(false);
     const [errortext, setErrortext] = useState('');
 
-    const [selectedTag, setSelectedTag] = useState(null);
+    const [selectedTag, setSelectedTag] = useState(cauza.tagAnimal ? cauza.tagAnimal : null);
 
 
     // @ts-ignore
@@ -36,6 +39,7 @@ const CauzaCreate = ({ navigation }) => {
 
 
     useEffect(() => {
+        console.log(interests);
         axiosInstance.get('/tags').then((response) => {
             setTags(new TagAnimal().deserializeArray(response.data));
         }).catch(error => {
@@ -84,9 +88,7 @@ const CauzaCreate = ({ navigation }) => {
         }
         else {
             setLoading(true);
-            let cauza;
             if(tipCauza === 'personal case') {
-                cauza = new CauzaPersonala();
                 cauza.descriere = description;
                 cauza.titlu = title;
                 cauza.locatie = location;
@@ -100,7 +102,6 @@ const CauzaCreate = ({ navigation }) => {
                 cauza.poze = images;
             }
             else if(tipCauza === 'shelter case') {
-                cauza = new CauzaAdapost();
                 cauza.descriere = description;
                 cauza.titlu = title;
                 cauza.locatie = location;
@@ -114,78 +115,48 @@ const CauzaCreate = ({ navigation }) => {
             console.log(userRef.current);
             // console.log(JSON.stringify({ type: cauza.type === 'CauzaAdapost' ? 'adapost': 'personala', ...cauza }));
 
-            axiosInstance.post('/cauza/' + userRef.current.id, cauza)
+            axiosInstance.put('/cauza/' + userRef.current.id, cauza)
                 .then((response) => {
 
-                console.log('Cauza adaugata cu succes');
-                cauza.id = response.data.id;
-                userRef.current.cauze.push(cauza);
-                cauza.id = response.data.id;
-                const formData = new FormData();
-                Promise.all(
-                    images.map((image) =>
-                        fetch(image.imageUri)
-                            .then(response => response.blob())
-                            .then(blob => formData.append(`pictures`, blob, `${Date.now()}_${Math.random().toString(36).substring(2)}.jpg`))
-                    )
-                ).then(() => {
+                    console.log('Cauza modificata cu succes');
+                    //userRef.current.cauze.push(cauza);
+                    cauza.id = response.data.id;
+                    const formData = new FormData();
+                    Promise.all(
+                        images.map((image) =>
+                            fetch(image.imageUri)
+                                .then(response => response.blob())
+                                .then(blob => formData.append(`pictures`, blob, `${Date.now()}_${Math.random().toString(36).substring(2)}.jpg`))
+                        )
+                    ).then(() => {
+                        fetch(API_URL + '/cauza/saveImages/' + cauza.id, {
+                            method: 'POST',
+                            headers: {
+                                //'Content-Type': 'multipart/form-data',
+                                'Accept': 'application/json'
+                            },
+                            body: formData
+                        }).then((response) => {
+                            console.warn(response)
+                            console.log('Poze adaugate cu succes');
+                            navigation.navigate('Home');
+                        }).catch(error => {
+                            console.error(error.response.data)
+                        })
 
-                    // const xhr = new XMLHttpRequest();
-                    // xhr.open('POST', API_URL+'/cauza/saveImages/' + cauza.id);
-                    // xhr.setRequestHeader('Content-Type', 'multipart/form-data');
-                    // xhr.send(formData);
-                    // xhr.onreadystatechange = function() {
-                    //     if (xhr.readyState === 4) {
-                    //         console.log(xhr.response);
-                    //     }
-                    // }
-                    /*
-                    axiosInstance.post('/cauza/saveImages/' + response.data.id, images).then((response) => {
-                    }).catch(error => {
-                        console.log(error.response.data)
-                    })
-                    */
-
-                    // axiosInstance.post('/cauza/saveImages/' + cauza.id, formData, {
-                    //     headers: {
-                    //         'Content-Type': 'multipart/form-data',
-                    //         'Accept': 'application/json'
-                    //     }
-                    // }).then((response) => {
-                    //     console.log('Poze adaugate cu succes');
-                    //     navigation.navigate('Home');
-                    // }).catch(error => {
-                    //     console.log(error.response.data)
-                    // });
-                    fetch(API_URL + '/cauza/saveImages/' + cauza.id, {
-                        method: 'POST',
-                        headers: {
-                            //'Content-Type': 'multipart/form-data',
-                            'Accept': 'application/json'
-                        },
-                        body: formData
-                    }).then((response) => {
-                        console.warn(response)
-                        console.log('Poze adaugate cu succes');
-                        navigation.navigate('Home');
-                    }).catch(error => {
-                        console.error(error.response.data)
-                    })
-
-                }).then(() => {
-                    let cauzaid = response.data.id;
-                    axiosInstance.get('/cauza/' + cauzaid).then((response) => {
-                        console.log(response.data);
-                        userRef.current.cauze.push(response.data);
-                        navigation.navigate('Home');
-                    }).catch(error => {
-                        console.error("get one cauza after image save, CauzaCreate")
-                        console.error(error.response.data)
+                    }).then(() => {
+                        let cauzaid = response.data.id;
+                        axiosInstance.get('/cauza/' + cauzaid).then((response) => {
+                            console.log(response.data);
+                            userRef.current.cauze.push(response.data);
+                            navigation.navigate('Home');
+                        }).catch(error => {
+                            console.error("get one cauza after image save, CauzaCreate")
+                            console.error(error.response.data)
+                        });
                     });
-                });
-
-                //CAUZA CREATA
-            }).catch(error => {
+                    //CAUZA CREATA
+                }).catch(error => {
                 console.error(error.response.data)
             });
             setLoading(false);
@@ -197,16 +168,16 @@ const CauzaCreate = ({ navigation }) => {
             <View style={styles.row}>
                 <Text style={styles.label}>Age:</Text>
                 <TextInput style={styles.input} value={age.toString()}
-                            onChangeText={(text) =>
-                            {
-                                text = text.replace(/[^0-9]/g, '');
-                                if (text.length == 0) {
-                                    text = '0';
-                                }
-                                setAge(parseInt(text));
-                            }
-                        }
-                            keyboardType={"numeric"}/>
+                           onChangeText={(text) =>
+                           {
+                               text = text.replace(/[^0-9]/g, '');
+                               if (text.length == 0) {
+                                   text = '0';
+                               }
+                               setAge(parseInt(text));
+                           }
+                           }
+                           keyboardType={"numeric"}/>
             </View>
 
             <View style={styles.row}>
@@ -236,21 +207,6 @@ const CauzaCreate = ({ navigation }) => {
                 </View>
 
                 <View style={styles.row}>
-                    <Text style={styles.label}>Case type:</Text>
-                    <Picker style={styles.picker}
-                            selectedValue={tipCauza}
-                            onValueChange={(itemValue) => {
-                                setTipCauza(itemValue);
-                                setSelectedTag(null);
-                                setInterests([]);
-                            }
-                            }>
-                        <Picker.Item label="Personal case" value="personal case" style={styles.pickerItem}/>
-                        <Picker.Item label="Shelter case" value="shelter case" style={styles.pickerItem}/>
-                    </Picker>
-                </View>
-
-                <View style={styles.row}>
                     <Text style={styles.label}>Name:</Text>
                     <TextInput style={styles.input} value={name} onChangeText={setName} />
                 </View>
@@ -265,11 +221,11 @@ const CauzaCreate = ({ navigation }) => {
                     {tags.map((tag) => (
                         <View key={tag.id} style={styles.checkboxContainer}>
                             {tipCauza === 'personal case'?
-                                <CustomCheckbox value={selectedTag === tag}
+                                <CustomCheckbox value={selectedTag.id === tag.id}
                                                 onValueChange={() => handleInterestChange(tag)} label={""}
                                                 unique={true}
                                 />:
-                                <CustomCheckbox value={false}
+                                <CustomCheckbox value={interests.some(t => t.id === tag.id)}
                                                 onValueChange={() => handleInterestChange(tag)} label={""}
                                                 unique={false}/>
                             }
@@ -301,7 +257,13 @@ const CauzaCreate = ({ navigation }) => {
                     <TouchableOpacity style={styles.button} onPress={handleSave}>
                         <Text style={styles.buttonText}>Save</Text>
                     </TouchableOpacity>
-                    </View>
+                </View>
+
+                <View style={{margin: 20, marginBottom: 0}}>
+                    <TouchableOpacity style={[styles.button, {padding: 5, backgroundColor: colors.Gray}]} onPress={() => navigation.navigate('Main')}>
+                        <Text style={styles.buttonText}>Cancel</Text>
+                    </TouchableOpacity>
+                </View>
 
             </View>
             <View style={styles.errorContainer}>
@@ -342,7 +304,7 @@ const styles = StyleSheet.create({
     },
     button: {
         alignItems: 'center',
-        backgroundColor: Colors.Gray,
+        backgroundColor: '#28A745',
         padding: 10,
         marginTop: 0,
         borderRadius: 5,
@@ -386,4 +348,4 @@ const styles = StyleSheet.create({
 
 });
 
-export default CauzaCreate;
+export default CauzaUpdate;

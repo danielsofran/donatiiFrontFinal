@@ -9,6 +9,7 @@ import CustomSidebarMenu from "./src/components/navbar/CostumSidebarMenu";
 import {Image, TouchableOpacity, View} from "react-native";
 import {createStackNavigator} from "@react-navigation/stack";
 import Shop from "./src/screens/Shop";
+import {Games} from "./src/screens/Games";
 
 const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
@@ -21,6 +22,7 @@ const getSymbol = (screen) => {
         case 'Profile': return '👤';
         case 'Setari': return '⚙';
         case 'Shop': return '🛒';
+        case 'Games': return '🎮';
     }
 }
 
@@ -159,6 +161,28 @@ const ProfilStack = ({navigation}) => {
     );
 }
 
+const GamesStack = ({navigation}) => {
+    return (
+        <Stack.Navigator initialRouteName="Games">
+            <Stack.Screen
+                name="Games"
+                component={Games}
+                options={{
+                    title: getSymbol('Games')+'️ Games', //Set Header Title
+                    headerLeft: () => <NavigationDrawerStructure navigationProps={navigation} />,
+                    headerStyle: {
+                        backgroundColor: 'rgba(127, 127, 213, 1)', //Set Header color
+                    },
+                    headerTintColor: '#fff', //Set Header text color
+                    headerTitleStyle: {
+                        fontWeight: 'bold', //Set Header text style
+                    },
+                }}
+            />
+        </Stack.Navigator>
+    );
+}
+
 const SetariStack = ({navigation}) => {
     return (
         <Stack.Navigator initialRouteName="Setari">
@@ -208,6 +232,10 @@ export const Main = () => {
                 name="ShopStack"
                 component={ShopStack}
                 options={{drawerLabel: getSymbol("Shop")+" Shop"}}/>
+            <Drawer.Screen
+                name="GamesStack"
+                component={GamesStack}
+                options={{drawerLabel: getSymbol("Games")+"️ Games"}}/>
             <Drawer.Screen
                 name="ProfilStack"
                 component={ProfilStack}

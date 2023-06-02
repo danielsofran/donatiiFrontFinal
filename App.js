@@ -12,10 +12,13 @@ import {UserContext, UserProvider} from "./src/utils/context/UserContext";
 import {Setari} from "./src/screens/Setari";
 import CauzeleMele from "./src/screens/CauzeleMele";
 import {Main} from "./Main";
+import CauzaUpdate from "./src/screens/CauzaUpdate";
+import colors from "./src/utils/enum/Colors";
 
 const Stack = createStackNavigator();
 
 export default function App() {
+
    return (
        <NavigationContainer>
            <UserProvider>
@@ -24,6 +27,7 @@ export default function App() {
                     <Stack.Screen name="Login" component={Login} options={{headerShown: false}}/>
                     <Stack.Screen name="Register" component={Register} options={{headerShown: false}}/>
                     <Stack.Screen name="Main" component={Main} options={{headerShown: false}}/>
+                    <Stack.Screen name="Edit" component={CauzaUpdate} options={{headerShown: false}}/>
                 </Stack.Navigator>
             </UserProvider>
        </NavigationContainer>
@@ -33,7 +37,7 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: colors.White,
     alignItems: 'center',
     justifyContent: 'center',
   },

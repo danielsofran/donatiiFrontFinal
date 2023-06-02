@@ -2,6 +2,7 @@ import React, {createContext, useRef, useState} from 'react';
 import {User} from "../../model/User";
 import {axiosInstance} from "../../api/axiosInstance";
 import {Cauza, deserializeCauzaArray} from "../../model/Cauza";
+import {useNavigation} from "@react-navigation/native";
 
 export const UserContext = createContext({});
 export const UserProvider = ({ children }) => {
@@ -9,6 +10,7 @@ export const UserProvider = ({ children }) => {
     const [allCases, setAllCases] = useState([]);
     const [myCases, setMyCases] = useState([]);
     const userRef = useRef(new User);
+    const navigation = useNavigation();
 
     const updateUser = () => {
         console.log("updateUser\nMy cases:");
@@ -25,7 +27,7 @@ export const UserProvider = ({ children }) => {
     };
 
     return (
-        <UserContext.Provider value={{ userRef, user, allCases, myCases, updateUser }}>
+        <UserContext.Provider value={{ userRef, user, allCases, myCases, updateUser, navigation }}>
             {children}
         </UserContext.Provider>
 );

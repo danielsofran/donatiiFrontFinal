@@ -1,5 +1,5 @@
-import React, {useRef, useState} from 'react';
-import {View, Text, StyleSheet, TouchableOpacity, Platform, Button, Alert, Animated, Modal, Image} from 'react-native';
+import React, {useContext, useRef, useState} from 'react';
+import {View, Text, StyleSheet, TouchableOpacity, Platform, Animated, Modal, Image} from 'react-native';
 import Colors from "../utils/enum/Colors";
 import PictureNavigator from "./small/PictureNavigator";
 import Progress from "./small/Progress";
@@ -12,11 +12,16 @@ import {axiosInstance} from "../api/axiosInstance";
 import {useAuth} from "../utils/context/UseAuth";
 import Icon from "react-native-vector-icons/FontAwesome";
 import NumberInput from "./small/NumberInput";
+import ThankYouModal from "./small/ThankYouModal";
+import ConfirmationModal from "./small/Confirmation";
+import {UserContext} from "../utils/context/UserContext";
 
 
-const CauzaPreview = ({cauza, updatable=false} : {cauza: Cauza, updatable: boolean}) => {
+const CauzaPreview = ({ cauza, updatable=false} : {cauza: Cauza, updatable: boolean}) => {
     // @ts-ignore
     const { userRef } = useAuth();
+    // @ts-ignore
+    const { navigation } = useContext(UserContext);
 
     const [liked, setLiked] = useState(userRef.current.sustineri.includes(cauza.id));
     const [nrLikes, setNrLikes] = useState(cauza.nrSustinatori)
@@ -26,6 +31,11 @@ const CauzaPreview = ({cauza, updatable=false} : {cauza: Cauza, updatable: boole
 
     const [sum, setSum] = useState(5);
     const [currency, setCurrency] = useState('RON');
+
+    const [showModal, setShowModal] = useState(false);
+    const [openConfirmationDonate, setOpenConfirmationDonate] = useState(false);
+
+    const [openConfirmationDelete, setOpenConfirmationDelete] = useState(false);
 
     useRef(new Animated.Value(0)).current;
 
@@ -47,28 +57,6 @@ const CauzaPreview = ({cauza, updatable=false} : {cauza: Cauza, updatable: boole
             console.log(error.response.data)
         });
     }
-
-    function handleDelete() {
-        if(Platform.OS === 'web') {
-            if (window.confirm('Are you sure you want to delete this case?')) {
-                confirmedDelete();
-            }
-            return;
-        }
-        Alert.alert(
-            'Confirm Delete',
-            'Are you sure you want to delete this case?',
-            [
-                { text: 'Cancel', style: 'cancel' },
-                { text: 'Delete', style: 'destructive', onPress: () =>
-                    {
-                        confirmedDelete();
-                    }},
-            ],
-            { cancelable: false }
-        );
-    }
-
     function confirmedDelete() {
         axiosInstance.delete(`/cauza/${cauza.id}`).then((response) => {
             console.log(response.data)
@@ -85,10 +73,16 @@ const CauzaPreview = ({cauza, updatable=false} : {cauza: Cauza, updatable: boole
         axiosInstance.put(`/cauza/donate/${cauza.id}/${sum}/${currency}`).then((response) => {
             console.log(response.data);
             setIsExpanded(false);
+            setShowModal(true);
         }).catch(error => {
             console.log(error.response.data);
             setIsExpanded(false);
+            setShowModal(true);
         });
+    }
+
+    function openUpdate() {
+        navigation.navigate('Edit', {cauza: cauza});
     }
 
     return (
@@ -101,20 +95,41 @@ const CauzaPreview = ({cauza, updatable=false} : {cauza: Cauza, updatable: boole
                 <LinearGradient
                     colors={['rgba(127, 127, 213, 0.7)', 'rgba(134, 168, 231, 0.7)', 'rgba(145, 234, 228, 0.7)']}
                     start={[0, 0]} end={[1, 1]}
-                    style={{overflow: 'hidden', marginBottom: 10, borderRadius: 20}}
-                >
+                    style={{
+                        overflow: 'hidden', marginBottom: 10, borderRadius: 20, display: 'flex',
+                        flexDirection: 'row', justifyContent: updatable? 'space-between': 'center', width: '100%'
+                }}>
+                    {updatable &&
+                        <TouchableOpacity style={styles.update} onPress={openUpdate}>
+                            <Icon name="edit" size={33} color="purple" />
+                        </TouchableOpacity>
+                    }
                     <Text style={styles.title}>{cauza.titlu}</Text>
-                    <></>
+                    {updatable &&
+                        <TouchableOpacity style={styles.delete} onPress={() => setOpenConfirmationDelete(true)}>
+                            <Icon name="trash" size={30} color="purple" />
+                        </TouchableOpacity>
+                    }
                 </LinearGradient>
                 <View style={styles.titleLocation}>
                     <View style={styles.listData}>
                         {
                             isCauzaAdapost(cauza) ?
+                                // @ts-ignore
                                 <Text style={styles.name_age_race}>🏡 {cauza.nume}</Text> :
                                 <>
-                                    <Text style={styles.name_age_race}>Name: {cauza.numeAnimal}</Text>
-                                    <Text style={styles.name_age_race}>Age: {cauza.varstaAnimal} ani</Text>
-                                    <Text style={styles.name_age_race}>Race: {cauza.rasaAnimal}</Text>
+                                    {
+                                        // @ts-ignore
+                                        <Text style={styles.name_age_race}>Name: {cauza.numeAnimal}</Text>
+                                    }
+                                    {
+                                        // @ts-ignore
+                                        <Text style={styles.name_age_race}>Age: {cauza.varstaAnimal} ani</Text>
+                                    }
+                                    {
+                                        // @ts-ignore
+                                        <Text style={styles.name_age_race}>Race: {cauza.rasaAnimal}</Text>
+                                    }
                                 </>
                         }
                     </View>
@@ -142,7 +157,9 @@ const CauzaPreview = ({cauza, updatable=false} : {cauza: Cauza, updatable: boole
                         justifyContent: 'space-between',
                     }}>
                         {isCauzaPersonala(cauza) ?
+                            // @ts-ignore
                             cauza.tagAnimal.nume !== ''? <AnimalTag animal={cauza.tagAnimal.nume}/>: <View></View> :
+                            // @ts-ignore
                             <AnimalsTag animals={cauza.taguri.map(tag => tag.nume)}/>
                         }
                         <View style={{flexDirection: 'row', alignItems: 'center'}}>
@@ -156,11 +173,13 @@ const CauzaPreview = ({cauza, updatable=false} : {cauza: Cauza, updatable: boole
                     </View>
                 </View>
                 {showHearts && <HeartsStream loading={false}></HeartsStream>}
-                {updatable &&
-                    <TouchableOpacity style={styles.delete} onPress={handleDelete}>
-                        <Icon name="trash" size={30} color="purple" />
-                    </TouchableOpacity>
+                { openConfirmationDelete &&
+                    <ConfirmationModal title={'Confirm delete'} text={'Are you sure you want to delete this case?'}
+                                       onAccept={confirmedDelete}
+                                       onReject={() => setOpenConfirmationDelete(false)} visible={true}
+                    />
                 }
+                {showModal && <ThankYouModal visible={showModal} onClose={() => setShowModal(false)} />}
             </View>
         </LinearGradient>
             {updatable ||
@@ -178,8 +197,8 @@ const CauzaPreview = ({cauza, updatable=false} : {cauza: Cauza, updatable: boole
                         <Image style={styles.background}
                                source={
                             Platform.OS === 'web' ?
-                            require('../../assets/animals-background.jpg'):
-                            require('../../assets/mobile-background.jpg')
+                            require('../../assets/animals-background-smaller.jpg'):
+                            require('../../assets/mobile-background-smaller.jpg')
                         }/>
                         <View style={styles.activityIndicatorWrapper}>
                             <Text style={styles.donateTitle}>Donate for {cauza.titlu}</Text>
@@ -191,12 +210,18 @@ const CauzaPreview = ({cauza, updatable=false} : {cauza: Cauza, updatable: boole
                                 <Text style={{fontSize: 18}}>Amount: </Text>
                                 <NumberInput minvalue={1} maxvalue={1000} initial={5} onValueChange={setSum}></NumberInput>
                             </View>
-                            <TouchableOpacity style={styles.donateButton} onPress={donate}>
+                            <TouchableOpacity style={styles.donateButton} onPress={() => setOpenConfirmationDonate(true)}>
                                 <Text style={styles.donateButtonText}>Register Donation</Text>
                             </TouchableOpacity>
                             <TouchableOpacity style={styles.cancelButton} onPress={() => setIsExpanded(false)}>
                                 <Text style={styles.cancelButtonText}>Cancel</Text>
                             </TouchableOpacity>
+                            { openConfirmationDonate && <ConfirmationModal visible={true} onAccept={
+                                () => {donate(); setOpenConfirmationDonate(false);}
+                            } onReject={
+                                () => {setOpenConfirmationDonate(false)}
+                            } title={'Confirm donation'} text={'Are you sure you want to donate ' + sum + currency + '?'}
+                            />}
                         </View>
                     </View>
                 </Modal>
@@ -293,9 +318,13 @@ const styles = StyleSheet.create({
     },
     delete: {
         opacity: 0.4,
-        position: 'absolute',
         top: 8,
-        left: 10,
+        left: -10,
+    },
+    update: {
+        opacity: 0.4,
+        top: 8,
+        right: -10,
     },
     donate: {
         marginBottom: 5,
@@ -373,7 +402,7 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: 'bold',
         color: '#696969',
-    }
+    },
 
 });
 
