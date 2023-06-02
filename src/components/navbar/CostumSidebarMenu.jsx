@@ -29,8 +29,15 @@ const CustomSidebarMenu = (props) => {
         const item = userRef.current.echipate.find(c => c.tip === 'Item');
         const background = userRef.current.echipate.find(c => c.tip === 'Background');
         const border = userRef.current.echipate.find(c => c.tip === 'Border');
+        if(!background) {
+            setEchipate((prevEchipate) => [...prevEchipate, { tip: 'Background', url: 'default' }]);
+        }
         if(background) {
             setEchipate((prevEchipate) => [...prevEchipate, { tip: 'Background', url: background.url }]);
+        }
+        if(!animal) {
+            setEchipate((prevEchipate) => [...prevEchipate, { tip: 'Animal', url: 'default' }]);
+            return;
         }
         if(animal && item) {
             setEchipate((prevEchipate) => [...prevEchipate, { tip: 'ItemAnimal', url: animal.url + '-' + item.url }]);

@@ -142,7 +142,7 @@ const CauzaPreview = ({cauza, updatable=false} : {cauza: Cauza, updatable: boole
                         justifyContent: 'space-between',
                     }}>
                         {isCauzaPersonala(cauza) ?
-                            <AnimalTag animal={cauza.tagAnimal.nume}/> :
+                            cauza.tagAnimal.nume !== ''? <AnimalTag animal={cauza.tagAnimal.nume}/>: <View></View> :
                             <AnimalsTag animals={cauza.taguri.map(tag => tag.nume)}/>
                         }
                         <View style={{flexDirection: 'row', alignItems: 'center'}}>
@@ -340,9 +340,10 @@ const styles = StyleSheet.create({
     },
     donateTitle: {
         textAlign: 'center',
-        fontSize: 32,
+        fontSize: 36,
+        marginHorizontal: 50,
         fontWeight: 'bold',
-        color: Platform.OS === 'web'? '#696969': '#6868ff',
+        color: Platform.OS === 'web'? '#696969': '#e733ff',
         marginBottom: 50,
     },
     donateButton: {
