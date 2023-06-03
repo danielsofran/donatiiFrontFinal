@@ -3,6 +3,7 @@ import {Text, StyleSheet, TouchableOpacity, View} from 'react-native';
 import {Entypo, FontAwesome, Ionicons, MaterialCommunityIcons, MaterialIcons} from '@expo/vector-icons';
 
 import Card from "../game_utils/Card";
+import {GameOver} from "../game_utils/GameOver";
 
 const MemoryGame = () => {
     const [cards, setCards] = useState(() => {
@@ -96,6 +97,8 @@ const MemoryGame = () => {
     const [currentSelection, setCurrentSelection] = useState([]);
     const [selectedPairs, setSelectedPairs] = useState([]);
     const [score, setScore] = useState(0);
+
+    const [showGameOver, setShowGameOver] = useState(false);
 
     const resetCards = () => {
         let resettedCards = cards.map((obj) => {
@@ -191,8 +194,11 @@ const MemoryGame = () => {
 
     useEffect(() => {
         if (score === 12) {
-            console.log('Game Over');
-            // USER GETS COINS
+            // USER GETS 3 COINS
+            setShowGameOver(true);
+            setTimeout(() => {
+                setShowGameOver(false);
+            }, 3500);
         }
     }, [score]);
 
@@ -203,6 +209,7 @@ const MemoryGame = () => {
             </View>
             <View style={styles.body}>
                 {renderRows()}
+                { showGameOver && <GameOver coins={3} onClose={() => setShowGameOver(false)}/>}
             </View>
             <View style={styles.score_container}>
                 <Text style={styles.score}>Score: {score}</Text>
