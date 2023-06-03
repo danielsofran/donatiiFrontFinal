@@ -46,7 +46,7 @@ const FOOD_INITIAL_POSITION = { x: 5, y: 20 };
 const MOVE_INTERVAL = 50;
 const SCORE_INCREMENT = 10;
 
-export default function Game(): JSX.Element {
+export default function SnakeGame(): JSX.Element {
     const [direction, setDirection] = useState<Direction>(Direction.Right);
     const [snake, setSnake] = useState<Coordinate[]>(SNAKE_INITIAL_POSITION);
     const [food, setFood] = useState<Coordinate>(FOOD_INITIAL_POSITION);
@@ -81,8 +81,8 @@ export default function Game(): JSX.Element {
 
         // GAME OVER
         if (checkGameOver(snakeHead, GAME_BOUNDS)) {
-            // GIVE USER SOME COINS(Score / 200)
-            setCoins(Math.floor(score / 200));
+            // GIVE USER SOME COINS(Score / 100)
+            setCoins(Math.floor(score / 100));
             setShowGameOver(true);
             setTimeout(() => {
                     setShowGameOver(false);
