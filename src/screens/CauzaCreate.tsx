@@ -8,7 +8,7 @@ import {TagAnimal} from "../model/TagAnimal";
 import PicturePicker from "../components/small/PicturePicker";
 import { AnimalTag } from "../components/small/AnimalTag";
 import {API_URL, axiosInstance} from "../api/axiosInstance";
-import {CauzaAdapost, CauzaPersonala} from "../model/Cauza";
+import {CauzaAdapost, CauzaPersonala, deserializeCauza} from "../model/Cauza";
 import {useAuth} from "../utils/context/UseAuth";
 
 const CauzaCreate = ({ navigation }) => {
@@ -32,7 +32,7 @@ const CauzaCreate = ({ navigation }) => {
 
 
     // @ts-ignore
-    const { userRef } = useAuth();
+    const { user, setUser, allCases, setAllCases } = useAuth();
 
 
     useEffect(() => {
@@ -111,79 +111,72 @@ const CauzaCreate = ({ navigation }) => {
                 cauza.taguri = interests;
                 cauza.poze = images;
             }
-            console.log(userRef.current);
             // console.log(JSON.stringify({ type: cauza.type === 'CauzaAdapost' ? 'adapost': 'personala', ...cauza }));
 
-            axiosInstance.post('/cauza/' + userRef.current.id, cauza)
+            axiosInstance.post('/cauza/' + user.id, cauza)
                 .then((response) => {
 
                 console.log('Cauza adaugata cu succes');
                 cauza.id = response.data.id;
-                userRef.current.cauze.push(cauza);
-                cauza.id = response.data.id;
-                const formData = new FormData();
-                Promise.all(
-                    images.map((image) =>
-                        fetch(image.imageUri)
-                            .then(response => response.blob())
-                            .then(blob => formData.append(`pictures`, blob, `${Date.now()}_${Math.random().toString(36).substring(2)}.jpg`))
-                    )
-                ).then(() => {
+                if(cauza.poze.length === 0) {
+                    axiosInstance.get('/cauza/' + cauza.id).then((response) => {
+                        console.log('Cauza si poze adaugata cu succes');
+                        let cauza = deserializeCauza(response.data)
+                        console.log(cauza);
+                        user.cauze.push(cauza);
+                        setUser(user);
 
-                    // const xhr = new XMLHttpRequest();
-                    // xhr.open('POST', API_URL+'/cauza/saveImages/' + cauza.id);
-                    // xhr.setRequestHeader('Content-Type', 'multipart/form-data');
-                    // xhr.send(formData);
-                    // xhr.onreadystatechange = function() {
-                    //     if (xhr.readyState === 4) {
-                    //         console.log(xhr.response);
-                    //     }
-                    // }
-                    /*
-                    axiosInstance.post('/cauza/saveImages/' + response.data.id, images).then((response) => {
-                    }).catch(error => {
-                        console.log(error.response.data)
-                    })
-                    */
-
-                    // axiosInstance.post('/cauza/saveImages/' + cauza.id, formData, {
-                    //     headers: {
-                    //         'Content-Type': 'multipart/form-data',
-                    //         'Accept': 'application/json'
-                    //     }
-                    // }).then((response) => {
-                    //     console.log('Poze adaugate cu succes');
-                    //     navigation.navigate('Home');
-                    // }).catch(error => {
-                    //     console.log(error.response.data)
-                    // });
-                    fetch(API_URL + '/cauza/saveImages/' + cauza.id, {
-                        method: 'POST',
-                        headers: {
-                            //'Content-Type': 'multipart/form-data',
-                            'Accept': 'application/json'
-                        },
-                        body: formData
-                    }).then((response) => {
-                        console.warn(response)
-                        console.log('Poze adaugate cu succes');
-                        navigation.navigate('Home');
-                    }).catch(error => {
-                        console.error(error.response.data)
-                    })
-
-                }).then(() => {
-                    let cauzaid = response.data.id;
-                    axiosInstance.get('/cauza/' + cauzaid).then((response) => {
-                        console.log(response.data);
-                        userRef.current.cauze.push(response.data);
+                        console.warn("all cases")
+                        console.warn(allCases, setAllCases)
+                        setAllCases([...allCases, cauza]);
                         navigation.navigate('Home');
                     }).catch(error => {
                         console.error("get one cauza after image save, CauzaCreate")
                         console.error(error.response.data)
                     });
-                });
+                }
+                else {
+                    const formData = new FormData();
+                    Promise.all(
+                        images.map((image) =>
+                            fetch(image.imageUri)
+                                .then(response => response.blob())
+                                .then(blob => formData.append(`pictures`, blob, `${Date.now()}_${Math.random().toString(36).substring(2)}.jpg`))
+                        )
+                    ).then(() => {
+                        fetch(API_URL + '/cauza/saveImages/' + cauza.id, {
+                            method: 'POST',
+                            headers: {
+                                //'Content-Type': 'multipart/form-data',
+                                'Accept': 'application/json'
+                            },
+                            body: formData
+                        }).then((response) => {
+                            console.warn(response)
+                            console.log('Poze adaugate cu succes');
 
+                            axiosInstance.get('/cauza/' + cauza.id).then((response) => {
+                                console.log('Cauza si poze adaugata cu succes');
+                                let cauza = deserializeCauza(response.data)
+                                console.log(cauza);
+                                user.cauze.push(cauza);
+                                setUser(user);
+
+                                console.warn("all cases")
+                                console.warn(allCases, setAllCases)
+                                setAllCases([...allCases, cauza]);
+                                navigation.navigate('Home');
+                            }).catch(error => {
+                                console.error("get one cauza after image save, CauzaCreate")
+                                console.error(error.response.data)
+                            });
+                            //navigation.navigate('Home');
+                        }).catch(error => {
+                            console.error(error.response.data)
+                        })
+
+                    })
+                }
                 //CAUZA CREATA
             }).catch(error => {
                 console.error(error.response.data)

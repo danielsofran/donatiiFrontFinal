@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useRef} from 'react';
-import {ScrollView, StyleSheet, View, Image, Text} from 'react-native';
+import {ScrollView, StyleSheet, View, Image, Text, Platform} from 'react-native';
 import ShopItem from "../components/small/ShopItem";
 import {UserContext} from "../utils/context/UserContext";
 import {axiosInstance} from "../api/axiosInstance";
@@ -7,20 +7,21 @@ import {Costumizabil} from "../model/Costumizabil";
 import ImageLayer from "../components/small/ImageLayer";
 import {Tip} from "../model/Enums";
 import {LinearGradient} from "expo-linear-gradient";
+import {MaterialIcons} from "@expo/vector-icons";
 
 const Shop = () => {
     // @ts-ignore
-    const { userRef } = useContext(UserContext);
-    const [costumizabile, setCostumizabile] = React.useState(userRef.current.costumizabile);
-    const [echipate, setEchipate] = React.useState(userRef.current.echipate);
+    const { user } = useContext(UserContext);
+    const [costumizabile, setCostumizabile] = React.useState(user.costumizabile);
+    const [echipate, setEchipate] = React.useState(user.echipate);
     const [equippedItemId, setEquippedItemId] = React.useState(null);
 
     const prepareEchipate = () => {
         setEchipate([]);
-        const animal = userRef.current.echipate.find(c => c.tip === 'Animal');
-        const item = userRef.current.echipate.find(c => c.tip === 'Item');
-        const background = userRef.current.echipate.find(c => c.tip === 'Background');
-        const border = userRef.current.echipate.find(c => c.tip === 'Border');
+        const animal = user.echipate.find(c => c.tip === 'Animal');
+        const item = user.echipate.find(c => c.tip === 'Item');
+        const background = user.echipate.find(c => c.tip === 'Background');
+        const border = user.echipate.find(c => c.tip === 'Border');
         if(!background) {
             setEchipate((prevEchipate) => [...prevEchipate, { tip: 'Background', url: 'default' }]);
         }
@@ -51,7 +52,7 @@ const Shop = () => {
         }).catch(error => {
             console.log(error.response.data)
         });
-        console.log(userRef.current.echipate)
+        console.log(user.echipate)
 
         // pregatire echipate
 
@@ -62,8 +63,21 @@ const Shop = () => {
             <Image style={styles.background} source={require('../../assets/WildBackground.jpg')}></Image>
             <View style={styles.header}>
                 <LinearGradient colors={['rgba(118,210,196,0.67)', 'rgba(118,210,196,0.43)', 'transparent']} style={{position: 'absolute', left: 0, right: 0, top: 0, height: "100%"}}/>
-                <Text style={styles.prewiewText}>AVATAR</Text>
-                <ImageLayer images={echipate} size={300}/>
+                <View style={{
+                    flexDirection: Platform.OS === 'web' ? 'row' : 'column',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    gap: Platform.OS === 'web' ? 100 : 0,
+                }}>
+                    <View style={styles.leftView}>
+                        <Text style={styles.leftText}>Coins: {user.coins}💰</Text>
+                        <Text style={styles.leftText}>Level: {user.level}<MaterialIcons name="upgrade" size={styles.leftText.fontSize} color="aqua" /></Text>
+                    </View>
+                    <View>
+                        <Text style={styles.prewiewText}>AVATAR</Text>
+                        <ImageLayer images={echipate} size={300}/>
+                    </View>
+                </View>
             </View>
             <View style={styles.container}>
                 {costumizabile.map(item => (
@@ -93,9 +107,10 @@ const styles = StyleSheet.create({
     },
     prewiewText: {
         fontFamily: 'Roboto',
-        fontSize: 24,
+        fontSize: 32,
         fontWeight: 'bold',
         color: 'whitesmoke',
+        textAlign: 'center',
         textShadowColor: 'rgba(255,255,255,0.75)',
         textShadowOffset: {width: 0, height: 0},
         textShadowRadius: 10,
@@ -109,6 +124,30 @@ const styles = StyleSheet.create({
         paddingTop: 20,
         paddingBottom: 40,
         marginBottom: 20,
+    },
+    leftView: {
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'flex-start',
+        marginRight: 20,
+        borderRadius: 20,
+        backgroundColor: 'rgba(0,0,0,0.29)',
+        margin: 50,
+        padding: 30,
+        // position: 'absolute',
+        // zIndex: 5,
+        // top: 20,
+        // right: 20,
+    },
+    leftText: {
+        fontFamily: 'Roboto',
+        fontSize: Platform.OS === 'web' ? 46 : 24,
+        fontWeight: 'bold',
+        color: 'whitesmoke',
+        textShadowColor: 'rgba(255,255,255,0.75)',
+        textShadowOffset: {width: 0, height: 0},
+        textShadowRadius: 10,
+        marginBottom: 7,
     }
 });
 

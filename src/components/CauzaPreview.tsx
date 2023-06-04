@@ -19,11 +19,11 @@ import {UserContext} from "../utils/context/UserContext";
 
 const CauzaPreview = ({ cauza, updatable=false} : {cauza: Cauza, updatable: boolean}) => {
     // @ts-ignore
-    const { userRef } = useAuth();
+    const { user, setUser, allCases, setAllCases } = useAuth();
     // @ts-ignore
     const { navigation } = useContext(UserContext);
 
-    const [liked, setLiked] = useState(userRef.current.sustineri.includes(cauza.id));
+    const [liked, setLiked] = useState(user.sustineri.includes(cauza.id));
     const [nrLikes, setNrLikes] = useState(cauza.nrSustinatori)
     const [showHearts, setShowHearts] = useState(false);
 
@@ -43,15 +43,17 @@ const CauzaPreview = ({ cauza, updatable=false} : {cauza: Cauza, updatable: bool
         if(!liked)
             setShowHearts(true);
         setLiked(!liked);
-        axiosInstance.put(`/user/like/${userRef.current.id}/${cauza.id}`).then((response) => {
+        axiosInstance.put(`/user/like/${user.id}/${cauza.id}`).then((response) => {
             console.log(response.data)
             if(!!liked) {
                 setNrLikes(nrLikes-1);
-                userRef.current.sustineri = userRef.current.sustineri.filter((id) => id !== cauza.id);
+                user.sustineri = user.sustineri.filter((id) => id !== cauza.id);
+                setUser(user);
             }
             else {
                 setNrLikes(nrLikes+1)
-                userRef.current.sustineri.push(cauza.id);
+                user.sustineri.push(cauza.id);
+                setUser(user);
             }
         }).catch(error => {
             console.log(error.response.data)
@@ -59,6 +61,13 @@ const CauzaPreview = ({ cauza, updatable=false} : {cauza: Cauza, updatable: bool
     }
     function confirmedDelete() {
         axiosInstance.delete(`/cauza/${cauza.id}`).then((response) => {
+            user.cauze.forEach(cauza2 => {
+                if (cauza2.id === cauza.id) {
+                    user.cauze = user.cauze.filter((cauza3) => cauza3.id !== cauza.id);
+                    setUser(user);
+                }
+            })
+            setAllCases(allCases.filter((cauza2) => cauza2.id !== cauza.id));
             console.log(response.data)
         }).catch(error => {
             console.log(error.response.data)
@@ -70,7 +79,7 @@ const CauzaPreview = ({ cauza, updatable=false} : {cauza: Cauza, updatable: bool
     }
 
     function donate() {
-        axiosInstance.put(`/cauza/donate/${cauza.id}/${sum}/${currency}`).then((response) => {
+        axiosInstance.put(`/cauza/donate/${cauza.id}/${user.id}/${sum}/${currency}`).then((response) => {
             console.log(response.data);
             setIsExpanded(false);
             setShowModal(true);

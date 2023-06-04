@@ -9,7 +9,7 @@ import CustomSidebarMenu from "./src/components/navbar/CostumSidebarMenu";
 import {Image, TouchableOpacity, View} from "react-native";
 import {createStackNavigator} from "@react-navigation/stack";
 import Shop from "./src/screens/Shop";
-import {Games} from "./src/screens/Games";
+import {Games} from "./src/components/navbar/Games";
 
 const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();

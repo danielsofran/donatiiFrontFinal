@@ -11,6 +11,7 @@ import { Easing, useSharedValue, withTiming } from "react-native-reanimated";
 import SpinControl from "./SpinControl";
 import WheelSegment from "./WheelSegment";
 import {generateWheelSegments} from "./Path";
+import {useAuth} from "../../../utils/context/UseAuth";
 const AnimatedSvg = Animated.createAnimatedComponent(Svg);
 type WheelProps = {
     segments: number[];
@@ -18,6 +19,8 @@ type WheelProps = {
     onSpin: () => void;
 };
 const Wheel: React.FC<WheelProps> = ({ segments, onEnd, onSpin }) => {
+    // @ts-ignore
+    const {user } = useAuth();
     const rotation = useSharedValue(0);
     const colorProgress = useSharedValue(0);
     const animatedCircleY = useSharedValue(120);
@@ -28,6 +31,10 @@ const Wheel: React.FC<WheelProps> = ({ segments, onEnd, onSpin }) => {
     const selectedSegmentAnimatedIndex = useSharedValue(randomIndex);
 
     const spinWheel = () => {
+        if(user.coins < 10) {
+            alert("You don't have enough coins to spin the wheel!");
+            return;
+        }
         setRandomIndex(Math.floor(Math.random() * segments.length));
         selectedSegmentAnimatedIndex.value = randomIndex;
         rotation.value = 0;

@@ -4,8 +4,11 @@ import {Entypo, FontAwesome, Ionicons, MaterialCommunityIcons, MaterialIcons} fr
 
 import Card from "../game_utils/Card";
 import {GameOver} from "../game_utils/GameOver";
+import {axiosInstance} from "../../api/axiosInstance";
+import {useAuth} from "../../utils/context/UseAuth";
 
 const MemoryGame = () => {
+    const {user, setUser} = useAuth();
     const [cards, setCards] = useState(() => {
         let sources = {
             'fontawesome': FontAwesome,
@@ -194,11 +197,23 @@ const MemoryGame = () => {
 
     useEffect(() => {
         if (score === 12) {
-            // USER GETS 3 COINS
-            setShowGameOver(true);
-            setTimeout(() => {
-                setShowGameOver(false);
-            }, 3500);
+            let coins = 10;
+            axiosInstance.put(`user/resources/${user.id}/${coins}/0`).then((res) => {
+                user.coins += coins;
+                setUser(user);
+                setShowGameOver(true);
+                setTimeout(() => {
+                    setShowGameOver(false);
+                }, 3500);
+            }).catch((err) => {
+                console.log(err);
+                setShowGameOver(true);
+                setTimeout(() => {
+                    setShowGameOver(false);
+                }, 3500);
+            });
+
+
         }
     }, [score]);
 
@@ -209,7 +224,7 @@ const MemoryGame = () => {
             </View>
             <View style={styles.body}>
                 {renderRows()}
-                { showGameOver && <GameOver coins={3} onClose={() => setShowGameOver(false)}/>}
+                { showGameOver && <GameOver coins={10} onClose={() => setShowGameOver(false)}/>}
             </View>
             <View style={styles.score_container}>
                 <Text style={styles.score}>Score: {score}</Text>

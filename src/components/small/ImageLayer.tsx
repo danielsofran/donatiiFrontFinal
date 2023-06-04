@@ -8,15 +8,15 @@ import {Costumizabil} from "../../model/Costumizabil";
 const ImageLayer = ({ images, size=200 } : {images: Costumizabil[], size: number|string}) => {
 
     // @ts-ignore
-    const { userRef } = useAuth();
-    const [echipate, setEchipate] = React.useState(userRef.current.echipate);
+    const { user } = useAuth();
+    const [echipate, setEchipate] = React.useState(user.echipate);
 
     useEffect(() => {
         setEchipate([]);
-        const animal = userRef.current.echipate.find(c => c.tip === 'Animal');
-        const item = userRef.current.echipate.find(c => c.tip === 'Item');
-        const background = userRef.current.echipate.find(c => c.tip === 'Background');
-        const border = userRef.current.echipate.find(c => c.tip === 'Border');
+        const animal = user.echipate.find(c => c.tip === 'Animal');
+        const item = user.echipate.find(c => c.tip === 'Item');
+        const background = user.echipate.find(c => c.tip === 'Background');
+        const border = user.echipate.find(c => c.tip === 'Border');
         if(!background) {
             setEchipate((prevEchipate) => [...prevEchipate, { tip: 'Background', url: 'default' }]);
         }
@@ -39,7 +39,7 @@ const ImageLayer = ({ images, size=200 } : {images: Costumizabil[], size: number
         if(border) {
             setEchipate((prevEchipate) => [...prevEchipate, { tip: 'Border', url: border.url }]);
         }
-    }, [userRef.current.echipate]);
+    }, [user.echipate]);
 
     return (
         <View style={{

@@ -8,6 +8,8 @@ import Score from "../game_utils/Score";
 import Snake from "../game_utils/Snake";
 import Food from "../game_utils/Food";
 import {GameOver} from "../game_utils/GameOver";
+import {axiosInstance} from "../../api/axiosInstance";
+import {useAuth} from "../../utils/context/UseAuth";
 
 const checkEatsFood = (
     head: Coordinate,
@@ -47,6 +49,8 @@ const MOVE_INTERVAL = 50;
 const SCORE_INCREMENT = 10;
 
 export default function SnakeGame(): JSX.Element {
+    // @ts-ignore
+    const {user, setUser} = useAuth();
     const [direction, setDirection] = useState<Direction>(Direction.Right);
     const [snake, setSnake] = useState<Coordinate[]>(SNAKE_INITIAL_POSITION);
     const [food, setFood] = useState<Coordinate>(FOOD_INITIAL_POSITION);
@@ -81,8 +85,16 @@ export default function SnakeGame(): JSX.Element {
 
         // GAME OVER
         if (checkGameOver(snakeHead, GAME_BOUNDS)) {
-            // GIVE USER SOME COINS(Score / 100)
-            setCoins(Math.floor(score / 100));
+            let coins = Math.floor(score / 100);
+
+            axiosInstance.put(`user/resources/${user.id}/${coins}/0`).then((res) => {
+                user.coins += coins;
+                setUser(user);
+            }).catch((err) => {
+                console.log(err);
+            });
+
+            setCoins(coins);
             setShowGameOver(true);
             setTimeout(() => {
                     setShowGameOver(false);

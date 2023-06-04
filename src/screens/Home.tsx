@@ -11,25 +11,24 @@ import {Banner} from "../components/small/Banner";
 import FilterMenu from "../components/small/FilterMenu";
 
 const Home = () => {
-    const [cauze, setCauze] = useState<Cauza[]>([]);
+    // const [cauze, setCauze] = useState<Cauza[]>([]);
 
     // @ts-ignore
-    const { userRef, allCases, myCases, updateUser } = useAuth();
+    const { user, allCases, setAllCases } = useAuth();
 
     useEffect(() => {
-        setCauze(allCases);
         axiosInstance.get('/cauza').then((response) => {
             let cauze: Cauza[] = deserializeCauzaArray(response.data);
             console.log(cauze);
-            setCauze(cauze);
+            setAllCases(cauze);
         })
     }, [])
 
     return (
         <>
             <Banner active={false/*!(localStorage.getItem(`mesaje${userRef.current.id}`) === 'false')*/}></Banner>
-            <FilterMenu callFunction={setCauze} />
-            <CauzeList cauze={cauze} user={userRef.current} updatable={false}/>
+            <FilterMenu callFunction={setAllCases} />
+            <CauzeList cauze={allCases} user={user} updatable={false}/>
         </>
     );
 }

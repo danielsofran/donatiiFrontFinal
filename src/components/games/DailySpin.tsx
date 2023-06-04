@@ -1,4 +1,4 @@
-import { StyleSheet, Text } from "react-native";
+import {ScrollView, StyleSheet, Text} from "react-native";
 import React, { useState } from "react";
 import { LinearGradient } from "expo-linear-gradient";
 
@@ -12,30 +12,44 @@ import WalletView from "../game_utils/roulette/WalletView";
 import SpinHeader from "../game_utils/roulette/SpinHeader";
 import Wheel from "../game_utils/roulette/Wheel";
 import {SCREEN_WIDTH} from "../game_utils/roulette/Screen";
+import {useAuth} from "../../utils/context/UseAuth";
+import {axiosInstance} from "../../api/axiosInstance";
+import {validateAnimatedStyles} from "react-native-reanimated/lib/types/lib/reanimated2/hook/utils";
 
 const segments = [25, 15, 10, 5, 3, 0];
 const cost = 10;
-const initialBalance = "50";// USER BALANCE
 
 const DailySpin = () => {
+    // @ts-ignore
+    const {user, setUser} = useAuth();
     const insets = useSafeAreaInsets();
     const labelOpacity = useSharedValue(0);
-    const [walletBalance, setWalletBalance] = useState(initialBalance);
-    const amount = useSharedValue(Number(initialBalance));
+    const [walletBalance, setWalletBalance] = useState(user.coins.toString());
+    const amount = useSharedValue(Number(user.coins));
 
     const handleWheelEnd = (value: number) => {
-        setWalletBalance(amount.value + " + " + value.toString());
-        labelOpacity.value = withTiming(1, { duration: 800 });
-        amount.value = withTiming(value + amount.value, {
-            duration: 800,
+        user.coins += value;
+        axiosInstance.put(`user/resources/${user.id}/${value}/0`).then(() => {
+            setUser(user);
+            setWalletBalance(amount.value + " + " + value.toString());
+            labelOpacity.value = withTiming(1, {duration: 800});
+            amount.value = withTiming(value + amount.value, {
+                duration: 800,
+            });
         });
     };
 
     const handleOnSpin = () => {
         //amount.value = 5;
         amount.value -= cost;
-        setWalletBalance("");
-        labelOpacity.value = 0;
+        user.coins -= cost;
+        axiosInstance.put(`user/resources/${user.id}/${-cost}/0`).then(() => {
+            setUser(user);
+            console.warn('Coins updated!')
+            setWalletBalance("");
+            labelOpacity.value = 0;
+        });
+
     };
 
     const amountText = useDerivedValue(() => {
@@ -43,19 +57,21 @@ const DailySpin = () => {
     }, []);
 
     return (
-        <LinearGradient
-            style={[styles.container, { paddingTop: insets.top }]}
-            colors={["#5C367D", "#00153B"]}
-        >
-            <SpinHeader />
-            <Text style={styles.multiplyEarningsText}>Multiply your Coins</Text>
-            <WalletView
-                opacity={labelOpacity}
-                amountText={amountText}
-                walletBalance={walletBalance}
-            />
-            <Wheel segments={segments} onEnd={handleWheelEnd} onSpin={handleOnSpin} />
-        </LinearGradient>
+        <ScrollView>
+            <LinearGradient
+                style={[styles.container, { paddingTop: insets.top }]}
+                colors={["#5C367D", "#00153B"]}
+            >
+                <SpinHeader />
+                <Text style={styles.multiplyEarningsText}>Multiply your Coins</Text>
+                <WalletView
+                    opacity={labelOpacity}
+                    amountText={amountText}
+                    walletBalance={walletBalance}
+                />
+                <Wheel segments={segments} onEnd={handleWheelEnd} onSpin={handleOnSpin} />
+            </LinearGradient>
+        </ScrollView>
     );
 };
 

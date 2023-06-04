@@ -8,7 +8,7 @@ import {TagAnimal} from "../model/TagAnimal";
 import PicturePicker from "../components/small/PicturePicker";
 import { AnimalTag } from "../components/small/AnimalTag";
 import {API_URL, axiosInstance} from "../api/axiosInstance";
-import {CauzaAdapost, CauzaPersonala} from "../model/Cauza";
+import {CauzaAdapost, CauzaPersonala, deserializeCauza} from "../model/Cauza";
 import {useAuth} from "../utils/context/UseAuth";
 import colors from "../utils/enum/Colors";
 
@@ -22,7 +22,7 @@ const CauzaUpdate = ({ navigation, route }) => {
     const [sumTarget, setTarget] = useState(cauza.sumaMinima);
     const [tipCauza] = useState(cauza.varstaAnimal ? 'personal case' : 'shelter case');
     const [tags, setTags] = useState<TagAnimal[]>([]);
-    const [images, setImages] = useState([]);
+    const [images, setImages] = useState(cauza.poze.map(poza => API_URL + poza.url));
     const [interests, setInterests] = useState(cauza.tagAnimal ? [cauza.tagAnimal] : cauza.taguri);
 
     const [name, setName] = useState(cauza.varstaAnimal ? cauza.numeAnimal : cauza.nume);
@@ -36,7 +36,7 @@ const CauzaUpdate = ({ navigation, route }) => {
 
 
     // @ts-ignore
-    const { userRef } = useAuth();
+    const { user, setUser, allCases, setAllCases } = useAuth();
 
 
     useEffect(() => {
@@ -113,48 +113,92 @@ const CauzaUpdate = ({ navigation, route }) => {
                 cauza.taguri = interests;
                 cauza.poze = images;
             }
-            console.log(userRef.current);
+
             // console.log(JSON.stringify({ type: cauza.type === 'CauzaAdapost' ? 'adapost': 'personala', ...cauza }));
             console.log(id);
             axiosInstance.put(`/cauza/${id}`, cauza)
                 .then((response) => {
 
                     console.log('Cauza modificata cu succes');
-                    //userRef.current.cauze.push(cauza);
-                    const formData = new FormData();
-                    Promise.all(
-                        images.map((image) =>
-                            fetch(image.imageUri)
-                                .then(response => response.blob())
-                                .then(blob => formData.append(`pictures`, blob, `${Date.now()}_${Math.random().toString(36).substring(2)}.jpg`))
-                        )
-                    ).then(() => {
-                        fetch(API_URL + '/cauza/saveImages/' + cauza.id, {
-                            method: 'POST',
-                            headers: {
-                                //'Content-Type': 'multipart/form-data',
-                                'Accept': 'application/json'
-                            },
-                            body: formData
-                        }).then((response) => {
-                            console.warn(response)
-                            console.log('Poze adaugate cu succes');
-                            navigation.navigate('Home');
-                        }).catch(error => {
-                            console.error(error.response.data)
-                        })
 
-                    }).then(() => {
-                        let cauzaid = response.data.id;
-                        axiosInstance.get('/cauza/' + cauzaid).then((response) => {
-                            console.log(response.data);
-                            userRef.current.cauze.push(response.data);
+                    if(cauza.poze.length === 0)
+                    {
+                        axiosInstance.get('/cauza/' + cauza.id).then((response) => {
+                            let cauza = deserializeCauza(response.data)
+                            console.log(cauza);
+                            user.cauze.push(cauza);
+                            setUser(user);
+
+                            console.warn("all cases")
+                            console.warn(allCases, setAllCases)
+                            for (let i = 0; i < allCases.length; i++) {
+                                if (allCases[i].id === cauza.id) {
+                                    allCases[i] = cauza;
+                                }
+                            }
+                            setAllCases(allCases);
                             navigation.navigate('Home');
                         }).catch(error => {
                             console.error("get one cauza after image save, CauzaCreate")
                             console.error(error.response.data)
                         });
-                    });
+                        navigation.navigate('Home');
+                    }
+                    else {
+                        const formData = new FormData();
+                        Promise.all(
+                            images.map((image) =>
+                                fetch(image.imageUri)
+                                    .then(response => response.blob())
+                                    .then(blob => formData.append(`pictures`, blob, `${Date.now()}_${Math.random().toString(36).substring(2)}.jpg`))
+                            )
+                        ).then(() => {
+                            fetch(API_URL + '/cauza/saveImages/' + cauza.id, {
+                                method: 'POST',
+                                headers: {
+                                    //'Content-Type': 'multipart/form-data',
+                                    'Accept': 'application/json'
+                                },
+                                body: formData
+                            }).then((response) => {
+                                console.warn(response)
+                                console.log('Poze modificate cu succes');
+                                axiosInstance.get('/cauza/' + cauza.id).then((response) => {
+                                    console.log('Cauza si poze adaugata cu succes');
+                                    let cauza = deserializeCauza(response.data)
+                                    console.log(cauza);
+                                    // user.cauze.push(cauza);
+                                    // setUser(user);
+                                    for(let i = 0; i < user.cauze.length; i++) {
+                                        if(user.cauze[i].id === cauza.id) {
+                                            user.cauze[i] = cauza;
+                                            setUser(user);
+                                            break;
+                                        }
+                                    }
+
+                                    console.warn("all cases")
+                                    console.warn(allCases, setAllCases)
+                                    for (let i = 0; i < allCases.length; i++) {
+                                        if (allCases[i].id === cauza.id) {
+                                            allCases[i] = cauza;
+                                            setAllCases(allCases);
+                                            break;
+                                        }
+                                    }
+
+                                    navigation.navigate('Home');
+                                }).catch(error => {
+                                    console.error("get one cauza after image save, CauzaCreate")
+                                    console.error(error.response.data)
+                                });
+                                navigation.navigate('Home');
+                            }).catch(error => {
+                                console.error(error.response.data)
+                            })
+
+                        })
+                    }
                     //CAUZA CREATA
                 }).catch(error => {
                 console.error(error.response.data)

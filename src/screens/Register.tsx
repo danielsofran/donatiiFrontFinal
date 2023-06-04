@@ -16,7 +16,7 @@ const Register = ({ navigation }) => {
     const [errortext, setErrortext] = useState('');
 
     // @ts-ignore
-    const { userRef, updateUser } = useContext(UserContext);
+    const { setUser } = useContext(UserContext);
 
     const hideDog = () => {
         setTimeout(() => setLoading(false), 0)
@@ -43,14 +43,16 @@ const Register = ({ navigation }) => {
             userRegister.parola = password;
             axiosInstance.post('/user/register', userRegister)
                 .then((response) => {
-                    console.log(response.data)
-                    console.log(userRegister)
+                    userRegister = new User().deserialize(response.data)
+                    console.log("User register: ", userRegister)
 
                     hideDog();
-                    userRef.current = userRegister;
-                    updateUser();
+                    setUser(userRegister)
+                    // userRef.current = userRegister;
+                    // updateUser();
                     //localStorage.setItem(`userRef`, JSON.stringify({email: userRegister.email, parola: userRegister.parola}));
-                    navigation.navigate('Main');
+                    if(userRegister.id !== 0)
+                        navigation.navigate('Main');
                 }).catch(error => {
                 console.log(error)
                 //if(error.response.status === 400) {

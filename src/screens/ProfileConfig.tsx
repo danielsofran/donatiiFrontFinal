@@ -13,29 +13,24 @@ import {AnimalTag} from "../components/small/AnimalTag";
 import WebNavbar from "../components/navbar/Web";
 
 const ProfileConfig = ({ navigation }) => {
-    const [username, setUsername] = useState("");
-    const [password, setPassword] = useState("");
-    const [email, setEmail] = useState("");
-    const [fullname, setFullname] = useState("");
-    const [gender, setGender] = useState();
-    const [interests, setInterests] = useState([]);
+    // @ts-ignore
+    const { user, setUser } = useAuth();
+
+    const [username, setUsername] = useState(user.username);
+    const [email, setEmail] = useState(user.email);
+    const [fullname, setFullname] = useState(user.fullName);
+    const [gender, setGender] = useState(user.gender);
+    const [interests, setInterests] = useState(user.interese);
 
     const [tags, setTags] = useState<TagAnimal[]>([]);
     const [loading, setLoading] = useState(false);
     const [errortext, setErrortext] = useState('');
     const [errorColor, setErrorColor] = useState('red');
 
-    // @ts-ignore
-    const { userRef, updateUser } = useAuth();
-
 
     useEffect(() => {
-        setUsername(userRef.current.username);
-        setPassword(userRef.current.parola);
-        setEmail(userRef.current.email);
-        setFullname(userRef.current.fullName);
-        setGender(userRef.current.gender);
-        setInterests(userRef.current.interese);
+        console.log("ProfileConfig useEffect")
+        console.log(interests)
         axiosInstance.get('/tags').then((response) => {
             setTags(new TagAnimal().deserializeArray(response.data));
         }).catch(error => {
@@ -55,9 +50,6 @@ const ProfileConfig = ({ navigation }) => {
         if (!username) {
             setErrortext('Please fill username');
         }
-        else if (!password) {
-            setErrortext('Please fill password');
-        }
         else if (!email) {
             setErrortext('Please fill email');
         }
@@ -70,19 +62,18 @@ const ProfileConfig = ({ navigation }) => {
         }
         else {
             setLoading(true);
-            userRef.current.username = username;
-            userRef.current.parola = password;
-            userRef.current.email = email;
-            userRef.current.fullName = fullname;
-            //userRef.current.gender = gender;
-            userRef.current.interese = interests;
-            axiosInstance.put('/user/' + userRef.current.id, userRef.current).then((response) => {
+            user.username = username;
+            user.email = email;
+            user.fullName = fullname;
+            user.gender = gender;
+            user.interese = interests;
+            axiosInstance.put('/user/' + user.id, user).then((response) => {
                 setLoading(false);
                 setErrorColor('blue');
                 setErrortext('Profile updated successfully');
                 alert('Profile updated successfully');
                 setLoading(false);
-                updateUser();
+                setUser(user);
             }).catch(error => {
                 console.log(error.response.data);
                 alert('Error updating profile')
@@ -129,7 +120,7 @@ const ProfileConfig = ({ navigation }) => {
 
                     {tags.map((tag) => (
                         <View key={tag.id} style={styles.checkboxContainer}>
-                            <CustomCheckbox value={interests.includes(tag)}
+                            <CustomCheckbox value={interests.filter(item => item.id === tag.id).length > 0}
                                             onValueChange={() => handleInterestChange(tag)}
                                             label={""} />
                             <AnimalTag animal={tag.nume} />

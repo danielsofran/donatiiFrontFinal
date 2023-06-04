@@ -2,14 +2,15 @@ import {StyleSheet} from "react-native";
 import Colors from "../utils/enum/Colors";
 import {CauzeList} from "../components/CauzeList";
 import {useAuth} from "../utils/context/UseAuth";
+import {User} from "../model/User";
 
 const CauzeleMele = ({ navigation }) => {
 
     // @ts-ignore
-    const { userRef, user, myCases } = useAuth();
+    const { user } = useAuth();
 
     return (
-        <CauzeList cauze={myCases} user={user} updatable={true}/>
+        <CauzeList cauze={user.cauze } user={user} updatable={true}/>
     );
 }
 

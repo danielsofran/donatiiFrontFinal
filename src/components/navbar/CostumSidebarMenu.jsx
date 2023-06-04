@@ -17,50 +17,18 @@ import ImageLayer from "../small/ImageLayer";
 import {useAuth} from "../../utils/context/UseAuth";
 
 const CustomSidebarMenu = (props) => {
-    const [ecipate, setEchipate] = React.useState([]);
 
     useEffect(() => {
         console.log("CustomSidebarMenu");
     }, []);
 
-    const prepareEchipate = () => {
-        setEchipate([]);
-        const animal = userRef.current.echipate.find(c => c.tip === 'Animal');
-        const item = userRef.current.echipate.find(c => c.tip === 'Item');
-        const background = userRef.current.echipate.find(c => c.tip === 'Background');
-        const border = userRef.current.echipate.find(c => c.tip === 'Border');
-        if(!background) {
-            setEchipate((prevEchipate) => [...prevEchipate, { tip: 'Background', url: 'default' }]);
-        }
-        if(background) {
-            setEchipate((prevEchipate) => [...prevEchipate, { tip: 'Background', url: background.url }]);
-        }
-        if(!animal) {
-            setEchipate((prevEchipate) => [...prevEchipate, { tip: 'Animal', url: 'default' }]);
-            return;
-        }
-        if(animal && item) {
-            setEchipate((prevEchipate) => [...prevEchipate, { tip: 'ItemAnimal', url: animal.url + '-' + item.url }]);
-        }
-        else if(animal) {
-            setEchipate((prevEchipate) => [...prevEchipate, { tip: 'Animal', url: animal.url }]);
-        }
-        else if(item) {
-            setEchipate((prevEchipate) => [...prevEchipate, { tip: 'Item', url: item.url }]);
-        }
-        if(border) {
-            setEchipate((prevEchipate) => [...prevEchipate, { tip: 'Border', url: border.url }]);
-        }
-    }
-
-
-    const { userRef } = useAuth();
+    const { user } = useAuth();
 
     return (
         <SafeAreaView>
             {/*Top Large Image */}
             <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', margin: 30, marginTop: 60 }}>
-                <ImageLayer images={userRef.current.echipate} size={200}/>
+                <ImageLayer images={user.echipate} size={200}/>
             </View>
             <ScrollView {...props}>
                 <DrawerItemList {...props} />

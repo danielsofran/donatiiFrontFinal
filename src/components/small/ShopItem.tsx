@@ -6,15 +6,15 @@ import {UserContext} from "../../utils/context/UserContext";
 
 const ShopItem = ({ item, call, setEquippedItemId, equippedItemId }) => {
     // @ts-ignore
-    const { userRef } = useContext(UserContext);
+    const { user, setUser } = useContext(UserContext);
     //
-    const [isDisabled, setIsDisabled] = useState(userRef.current.level < item.levelMin || userRef.current.coins < item.costBani);
-    const [isPurchased, setIsPurchased] = useState(userRef.current.costumizabile.find(c => c.id === item.id));
-    const [isEquipped, setIsEquiped] = useState(userRef.current.echipate.find(c => c.id === item.id));
+    const [isDisabled, setIsDisabled] = useState(user.level < item.levelMin || user.coins < item.costBani);
+    const [isPurchased, setIsPurchased] = useState(user.costumizabile.find(c => c.id === item.id));
+    const [isEquipped, setIsEquiped] = useState(user.echipate.find(c => c.id === item.id));
 
     useEffect(() => {
-        setIsEquiped(userRef.current.echipate.find(c => c.id === item.id));
-    }, [userRef.current, equippedItemId]);
+        setIsEquiped(user.echipate.find(c => c.id === item.id));
+    }, [user, equippedItemId]);
 
     //
     // useEffect(() => {
@@ -30,31 +30,32 @@ const ShopItem = ({ item, call, setEquippedItemId, equippedItemId }) => {
 
         if(!isPurchased) { // not purchased
             console.log('BUY');
-            axiosInstance.put(`/user/buy/${userRef.current.id}/${item.id}`).then((response) => {
+            axiosInstance.put(`/user/buy/${user.id}/${item.id}`).then((response) => {
                 console.log(response.data);
                 setIsPurchased(true);
-                userRef.current.costumizabile.push(item);
-                userRef.coins -= item.costBani;
+                user.costumizabile.push(item);
+                user.coins -= item.costBani;
+                setUser(user)
             }).catch(error => {
                 console.log(error.response.data)
             });
         }
         else if(isEquipped) {
             console.log('UNEQUIPED');
-            axiosInstance.put(`/user/disequip/${userRef.current.id}/${item.id}`).then((response) => {
+            axiosInstance.put(`/user/disequip/${user.id}/${item.id}`).then((response) => {
                 //console.log(response.data);
                 setIsEquiped(false);
-                userRef.current.echipate = new Costumizabil().deserializeArray(response.data);
+                user.echipate = new Costumizabil().deserializeArray(response.data);
                 call();
             }).catch(error => {
                 console.log(error.response.data)
             });
         }
         else {
-            axiosInstance.put(`/user/equip/${userRef.current.id}/${item.id}`)
+            axiosInstance.put(`/user/equip/${user.id}/${item.id}`)
                 .then((response) => {
                     setIsEquiped(true);
-                    userRef.current.echipate = new Costumizabil().deserializeArray(response.data);
+                    user.echipate = new Costumizabil().deserializeArray(response.data);
                     call();
                     setEquippedItemId(item.id); // Set the equipped item ID
                 })

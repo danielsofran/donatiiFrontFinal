@@ -4,10 +4,11 @@ import {useAuth} from "../utils/context/UseAuth";
 import Colors from "../utils/enum/Colors";
 import WebNavbar from "../components/navbar/Web";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import {User} from "../model/User";
 
 export const Setari = ({ navigation }) => {
     // @ts-ignore
-    const { userRef } = useAuth();
+    const { user, setUser } = useAuth();
 
     //const [permisiuneLocatie, setPermisiuneLocatie] = useState(localStorage.getItem(`locatie${userRef.current.id}`) === 'true');
     const [permisiuneLocatie, setPermisiuneLocatie] = useState(false);
@@ -15,23 +16,25 @@ export const Setari = ({ navigation }) => {
     const [permisiuneMesaje, setPermisiuneMesaje] = useState(false);
 
     useEffect(() => {
-        AsyncStorage.getItem(`locatie${userRef.current.id}`).then((value) => setPermisiuneLocatie(value === 'true'));
-        AsyncStorage.getItem(`mesaje${userRef.current.id}`).then((value) => setPermisiuneMesaje(value === 'true'));
+        AsyncStorage.getItem(`locatie`).then((value) => setPermisiuneLocatie(value === 'true'));
+        AsyncStorage.getItem(`mesaje`).then((value) => setPermisiuneMesaje(value === 'true'));
     }, []);
 
     function changePermisiune() {
         setPermisiuneLocatie(!permisiuneLocatie);
-        AsyncStorage.setItem(`locatie${userRef.current.id}`, (permisiuneLocatie).toString()).then(() => alert('Change saved!'));
+        AsyncStorage.setItem(`locatie`, (permisiuneLocatie).toString()).then(() => alert('Change saved!'));
     }
 
     function changeMesaje() {
         setPermisiuneMesaje(!permisiuneMesaje);
-        AsyncStorage.setItem(`mesaje${userRef.current.id}`, (permisiuneMesaje).toString()).then(() => alert('Change saved!'));
+        AsyncStorage.setItem(`mesaje`, (permisiuneMesaje).toString()).then(() => alert('Change saved!'));
     }
 
     function handleLogout() {
-        userRef.current = {};
-        AsyncStorage.setItem(`userRef`, '').then(() => navigation.navigate('Login'));
+        AsyncStorage.removeItem('userRef').then(() => {
+            setUser(new User());
+            navigation.navigate('Login')
+        });
     }
 
     const styles = StyleSheet.create({

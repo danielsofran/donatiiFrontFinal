@@ -22,7 +22,7 @@ const Login = ({ navigation }) => {
     const [isUserPresent, setIsUserPresent] = useState(false);
 
     // @ts-ignore
-    const { userRef, updateUser } = useContext(UserContext);
+    const { setUser } = useContext(UserContext);
 
     const handleCheckboxToggle = () => {
         setChecked(!checked);
@@ -47,13 +47,16 @@ const Login = ({ navigation }) => {
                         console.log(response.data)
                         console.log(userLogin)
 
-                        userRef.current = userLogin;
-                        updateUser();
+                        // userRef.current = userLogin;
+                        // updateUser();
+                        setUser(userLogin);
                         navigation.navigate('Main');
-                    }).catch(error => {
-                    console.log(error)
-                    setErrortext(error.response.data)
-                });
+                    })
+                    .catch(error => {
+                        setIsUserPresent(true)
+                        console.log(error)
+                        setErrortext(error.response.data)
+                    });
                 //navigation.navigate('Main');
             }
             else {
@@ -93,8 +96,9 @@ const Login = ({ navigation }) => {
                 console.log(userLogin)
 
                 hideDog();
-                userRef.current = userLogin;
-                updateUser();
+                setUser(userLogin);
+                // userRef.current = userLogin;
+                // updateUser();
 
                 navigation.navigate('Main');
             }).catch(error => {

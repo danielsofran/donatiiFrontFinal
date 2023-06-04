@@ -8,7 +8,6 @@ export const UserContext = createContext({});
 export const UserProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [allCases, setAllCases] = useState([]);
-    const [myCases, setMyCases] = useState([]);
     const userRef = useRef(new User);
     const navigation = useNavigation();
 
@@ -23,11 +22,10 @@ export const UserProvider = ({ children }) => {
             setAllCases(cauze);
             //setMyCases(cauze.filter(cauza => cauza. === userRef.current.id));
         })
-        setMyCases(userRef.current.cauze);
     };
 
     return (
-        <UserContext.Provider value={{ userRef, user, allCases, myCases, updateUser, navigation }}>
+        <UserContext.Provider value={{ user, setUser, allCases, setAllCases, navigation }}>
             {children}
         </UserContext.Provider>
 );

@@ -3,7 +3,8 @@ import {Cauza, CauzaPersonala} from "../Cauza";
 
 export class Donatie implements Serializable<Donatie>{
     id: number = 0;
-    cauza: Cauza = new CauzaPersonala();
+    cauzaId: number = 0;
+    cauzaTitlu: string = "";
     suma: number = 0;
     moneda: string = "RON";
     data: Date = new Date();
