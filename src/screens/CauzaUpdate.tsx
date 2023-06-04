@@ -15,13 +15,14 @@ import colors from "../utils/enum/Colors";
 const CauzaUpdate = ({ navigation, route }) => {
     const { cauza } = route.params;
 
+    const id = cauza.id;
     const [title, setTitle] = useState(cauza.titlu);
     const [location, setLocation] = useState(cauza.locatie);
     const [description, setDescription] = useState(cauza.descriere);
     const [sumTarget, setTarget] = useState(cauza.sumaMinima);
     const [tipCauza] = useState(cauza.varstaAnimal ? 'personal case' : 'shelter case');
     const [tags, setTags] = useState<TagAnimal[]>([]);
-    const [images, setImages] = useState(cauza.poze);
+    const [images, setImages] = useState([]);
     const [interests, setInterests] = useState(cauza.tagAnimal ? [cauza.tagAnimal] : cauza.taguri);
 
     const [name, setName] = useState(cauza.varstaAnimal ? cauza.numeAnimal : cauza.nume);
@@ -114,13 +115,12 @@ const CauzaUpdate = ({ navigation, route }) => {
             }
             console.log(userRef.current);
             // console.log(JSON.stringify({ type: cauza.type === 'CauzaAdapost' ? 'adapost': 'personala', ...cauza }));
-
-            axiosInstance.put('/cauza/' + userRef.current.id, cauza)
+            console.log(id);
+            axiosInstance.put(`/cauza/${id}`, cauza)
                 .then((response) => {
 
                     console.log('Cauza modificata cu succes');
                     //userRef.current.cauze.push(cauza);
-                    cauza.id = response.data.id;
                     const formData = new FormData();
                     Promise.all(
                         images.map((image) =>
