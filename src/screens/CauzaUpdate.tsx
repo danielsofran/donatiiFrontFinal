@@ -1,28 +1,27 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text, TextInput, TouchableOpacity, StyleSheet, Platform, ScrollView} from 'react-native';
-import { Picker } from '@react-native-picker/picker';
+import {Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import CustomCheckbox from "../components/small/CustomCheckbox";
 import Colors from "../utils/enum/Colors";
+import colors from "../utils/enum/Colors";
 import Loader from "../components/small/Loader";
 import {TagAnimal} from "../model/TagAnimal";
 import PicturePicker from "../components/small/PicturePicker";
-import { AnimalTag } from "../components/small/AnimalTag";
+import {AnimalTag} from "../components/small/AnimalTag";
 import {API_URL, axiosInstance} from "../api/axiosInstance";
-import {CauzaAdapost, CauzaPersonala, deserializeCauza} from "../model/Cauza";
+import {deserializeCauza} from "../model/Cauza";
 import {useAuth} from "../utils/context/UseAuth";
-import colors from "../utils/enum/Colors";
+import {User} from "../model/User";
 
 const CauzaUpdate = ({ navigation, route }) => {
     const { cauza } = route.params;
 
-    const id = cauza.id;
     const [title, setTitle] = useState(cauza.titlu);
     const [location, setLocation] = useState(cauza.locatie);
     const [description, setDescription] = useState(cauza.descriere);
     const [sumTarget, setTarget] = useState(cauza.sumaMinima);
     const [tipCauza] = useState(cauza.varstaAnimal ? 'personal case' : 'shelter case');
     const [tags, setTags] = useState<TagAnimal[]>([]);
-    const [images, setImages] = useState(cauza.poze.map(poza => API_URL + poza.url));
+    const [images, setImages] = useState([]);
     const [interests, setInterests] = useState(cauza.tagAnimal ? [cauza.tagAnimal] : cauza.taguri);
 
     const [name, setName] = useState(cauza.varstaAnimal ? cauza.numeAnimal : cauza.nume);
@@ -59,8 +58,17 @@ const CauzaUpdate = ({ navigation, route }) => {
                 } else {
                     setSelectedTag(interes);
                 }
+                interests.push(interes);
             }
-            interests.push(interes);
+            if(interests.filter(item => item.id === interes.id).length === 0) {
+                interests.push(interes);
+            }
+            else {
+                let remaining = interests.filter(item => item.id !== interes.id);
+                setInterests(remaining);
+                console.log(remaining);
+            }
+
         }
     };
 
@@ -115,34 +123,37 @@ const CauzaUpdate = ({ navigation, route }) => {
             }
 
             // console.log(JSON.stringify({ type: cauza.type === 'CauzaAdapost' ? 'adapost': 'personala', ...cauza }));
-            console.log(id);
-            axiosInstance.put(`/cauza/${id}`, cauza)
+            console.log(cauza.id);
+            axiosInstance.put(`/cauza/` + cauza.id, cauza)
                 .then((response) => {
-
-                    console.log('Cauza modificata cu succes');
-
-                    if(cauza.poze.length === 0)
-                    {
+                    console.log('Cauza adaugata cu succes');
+                    if(cauza.poze.length === 0) {
                         axiosInstance.get('/cauza/' + cauza.id).then((response) => {
+                            console.log('Cauza si poze adaugata cu succes');
                             let cauza = deserializeCauza(response.data)
                             console.log(cauza);
-                            user.cauze.push(cauza);
-                            setUser(user);
+                            user.cauze = user.cauze.map(obj => {
+                                if (obj.id === cauza.id) {
+                                    return cauza;
+                                }
+                                return obj;
+                            });
+                            setUser(User.copy(user));
 
                             console.warn("all cases")
                             console.warn(allCases, setAllCases)
-                            for (let i = 0; i < allCases.length; i++) {
-                                if (allCases[i].id === cauza.id) {
-                                    allCases[i] = cauza;
+                            const newCases =  allCases.map(obj => {
+                                if (obj.id === cauza.id) {
+                                    return cauza;
                                 }
-                            }
-                            setAllCases(allCases);
+                                return obj;
+                            });
+                            setAllCases(newCases);
                             navigation.navigate('Home');
                         }).catch(error => {
                             console.error("get one cauza after image save, CauzaCreate")
                             console.error(error.response.data)
                         });
-                        navigation.navigate('Home');
                     }
                     else {
                         const formData = new FormData();
@@ -162,37 +173,35 @@ const CauzaUpdate = ({ navigation, route }) => {
                                 body: formData
                             }).then((response) => {
                                 console.warn(response)
-                                console.log('Poze modificate cu succes');
+                                console.log('Poze adaugate cu succes');
+
                                 axiosInstance.get('/cauza/' + cauza.id).then((response) => {
                                     console.log('Cauza si poze adaugata cu succes');
                                     let cauza = deserializeCauza(response.data)
                                     console.log(cauza);
-                                    // user.cauze.push(cauza);
-                                    // setUser(user);
-                                    for(let i = 0; i < user.cauze.length; i++) {
-                                        if(user.cauze[i].id === cauza.id) {
-                                            user.cauze[i] = cauza;
-                                            setUser(user);
-                                            break;
+                                    user.cauze = user.cauze.map(obj => {
+                                        if (obj.id === cauza.id) {
+                                            return cauza;
                                         }
-                                    }
+                                        return obj;
+                                    });
+                                    setUser(User.copy(user));
 
                                     console.warn("all cases")
                                     console.warn(allCases, setAllCases)
-                                    for (let i = 0; i < allCases.length; i++) {
-                                        if (allCases[i].id === cauza.id) {
-                                            allCases[i] = cauza;
-                                            setAllCases(allCases);
-                                            break;
+                                    const newCases =  allCases.map(obj => {
+                                        if (obj.id === cauza.id) {
+                                            return cauza;
                                         }
-                                    }
-
+                                        return obj;
+                                    });
+                                    setAllCases(newCases);
                                     navigation.navigate('Home');
                                 }).catch(error => {
                                     console.error("get one cauza after image save, CauzaCreate")
                                     console.error(error.response.data)
                                 });
-                                navigation.navigate('Home');
+                                //navigation.navigate('Home');
                             }).catch(error => {
                                 console.error(error.response.data)
                             })

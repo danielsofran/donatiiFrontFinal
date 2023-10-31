@@ -8,10 +8,11 @@ import ImageLayer from "../components/small/ImageLayer";
 import {Tip} from "../model/Enums";
 import {LinearGradient} from "expo-linear-gradient";
 import {MaterialIcons} from "@expo/vector-icons";
+import {useAuth} from "../utils/context/UseAuth";
 
 const Shop = () => {
     // @ts-ignore
-    const { user } = useContext(UserContext);
+    const { user } = useAuth();
     const [costumizabile, setCostumizabile] = React.useState(user.costumizabile);
     const [echipate, setEchipate] = React.useState(user.echipate);
     const [equippedItemId, setEquippedItemId] = React.useState(null);
@@ -57,6 +58,10 @@ const Shop = () => {
         // pregatire echipate
 
     },[]);
+
+    useEffect(() => {
+        console.log(user.coins, user.level)
+    }, [user])
 
     return (
         <ScrollView style={{width: '100%', padding: 0, margin: 0}}>

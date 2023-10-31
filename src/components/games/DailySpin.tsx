@@ -15,6 +15,7 @@ import {SCREEN_WIDTH} from "../game_utils/roulette/Screen";
 import {useAuth} from "../../utils/context/UseAuth";
 import {axiosInstance} from "../../api/axiosInstance";
 import {validateAnimatedStyles} from "react-native-reanimated/lib/types/lib/reanimated2/hook/utils";
+import {User} from "../../model/User";
 
 const segments = [25, 15, 10, 5, 3, 0];
 const cost = 10;
@@ -30,7 +31,7 @@ const DailySpin = () => {
     const handleWheelEnd = (value: number) => {
         user.coins += value;
         axiosInstance.put(`user/resources/${user.id}/${value}/0`).then(() => {
-            setUser(user);
+            setUser(User.copy(user));
             setWalletBalance(amount.value + " + " + value.toString());
             labelOpacity.value = withTiming(1, {duration: 800});
             amount.value = withTiming(value + amount.value, {
@@ -44,7 +45,7 @@ const DailySpin = () => {
         amount.value -= cost;
         user.coins -= cost;
         axiosInstance.put(`user/resources/${user.id}/${-cost}/0`).then(() => {
-            setUser(user);
+            setUser(User.copy(user));
             console.warn('Coins updated!')
             setWalletBalance("");
             labelOpacity.value = 0;

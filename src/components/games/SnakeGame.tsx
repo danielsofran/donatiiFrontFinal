@@ -10,6 +10,7 @@ import Food from "../game_utils/Food";
 import {GameOver} from "../game_utils/GameOver";
 import {axiosInstance} from "../../api/axiosInstance";
 import {useAuth} from "../../utils/context/UseAuth";
+import {User} from "../../model/User";
 
 const checkEatsFood = (
     head: Coordinate,
@@ -89,7 +90,7 @@ export default function SnakeGame(): JSX.Element {
 
             axiosInstance.put(`user/resources/${user.id}/${coins}/0`).then((res) => {
                 user.coins += coins;
-                setUser(user);
+                setUser(User.copy(user));
             }).catch((err) => {
                 console.log(err);
             });

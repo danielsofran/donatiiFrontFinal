@@ -25,7 +25,7 @@ const CustomSidebarMenu = (props) => {
     const { user } = useAuth();
 
     return (
-        <SafeAreaView>
+        <ScrollView>
             {/*Top Large Image */}
             <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', margin: 30, marginTop: 60 }}>
                 <ImageLayer images={user.echipate} size={200}/>
@@ -33,10 +33,10 @@ const CustomSidebarMenu = (props) => {
             <ScrollView {...props}>
                 <DrawerItemList {...props} />
             </ScrollView>
-            <Text style={{ fontSize: 16, textAlign: 'center', color: 'grey' }}>
+            <Text style={{ fontSize: 16, textAlign: 'center', color: 'grey', marginBottom: 16 }}>
                 🌐 www.WorldWildWeb.com 🐗
             </Text>
-        </SafeAreaView>
+        </ScrollView>
     );
 };
 

@@ -79,7 +79,7 @@ const FilterMenu = ({ callFunction }) => {
             {isOpen && (
                 <View style={{
                     flexDirection: Platform.OS === 'web'? 'row': 'column',
-                    alignItems: 'center',
+                    alignItems: Platform.OS === 'web'? 'center': 'flex-start',
                     gap: 10,
                     marginTop: Platform.OS === 'web'? 0: 10,
                 }}>

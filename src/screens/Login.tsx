@@ -19,10 +19,8 @@ const Login = ({ navigation }) => {
 
     const [checked, setChecked] = useState(false);
 
-    const [isUserPresent, setIsUserPresent] = useState(false);
-
     // @ts-ignore
-    const { setUser } = useContext(UserContext);
+    const { setUser, isUserPresent, setIsUserPresent } = useContext(UserContext);
 
     const handleCheckboxToggle = () => {
         setChecked(!checked);

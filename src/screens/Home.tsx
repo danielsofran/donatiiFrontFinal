@@ -9,6 +9,7 @@ import WebNavbar from "../components/navbar/Web";
 import {useAuth} from "../utils/context/UseAuth";
 import {Banner} from "../components/small/Banner";
 import FilterMenu from "../components/small/FilterMenu";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Home = () => {
     // const [cauze, setCauze] = useState<Cauza[]>([]);
@@ -16,17 +17,23 @@ const Home = () => {
     // @ts-ignore
     const { user, allCases, setAllCases } = useAuth();
 
+    const [showBanner, setShowBanner] = useState(false);
+
     useEffect(() => {
+        AsyncStorage.getItem(`mesaje`).then((value) => {
+            setShowBanner(value === 'true')
+        });
         axiosInstance.get('/cauza').then((response) => {
             let cauze: Cauza[] = deserializeCauzaArray(response.data);
             console.log(cauze);
             setAllCases(cauze);
         })
+
     }, [])
 
     return (
         <>
-            <Banner active={false/*!(localStorage.getItem(`mesaje${userRef.current.id}`) === 'false')*/}></Banner>
+            { showBanner && <Banner active={true}></Banner> }
             <FilterMenu callFunction={setAllCases} />
             <CauzeList cauze={allCases} user={user} updatable={false}/>
         </>

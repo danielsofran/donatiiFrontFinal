@@ -15,6 +15,8 @@ import NumberInput from "./small/NumberInput";
 import ThankYouModal from "./small/ThankYouModal";
 import ConfirmationModal from "./small/Confirmation";
 import {UserContext} from "../utils/context/UserContext";
+import {all} from "axios";
+import {User} from "../model/User";
 
 
 const CauzaPreview = ({ cauza, updatable=false} : {cauza: Cauza, updatable: boolean}) => {
@@ -48,12 +50,12 @@ const CauzaPreview = ({ cauza, updatable=false} : {cauza: Cauza, updatable: bool
             if(!!liked) {
                 setNrLikes(nrLikes-1);
                 user.sustineri = user.sustineri.filter((id) => id !== cauza.id);
-                setUser(user);
+                setUser(User.copy(user));
             }
             else {
                 setNrLikes(nrLikes+1)
                 user.sustineri.push(cauza.id);
-                setUser(user);
+                setUser(User.copy(user));
             }
         }).catch(error => {
             console.log(error.response.data)
@@ -64,7 +66,7 @@ const CauzaPreview = ({ cauza, updatable=false} : {cauza: Cauza, updatable: bool
             user.cauze.forEach(cauza2 => {
                 if (cauza2.id === cauza.id) {
                     user.cauze = user.cauze.filter((cauza3) => cauza3.id !== cauza.id);
-                    setUser(user);
+                    setUser(User.copy(user));
                 }
             })
             setAllCases(allCases.filter((cauza2) => cauza2.id !== cauza.id));
@@ -81,8 +83,27 @@ const CauzaPreview = ({ cauza, updatable=false} : {cauza: Cauza, updatable: bool
     function donate() {
         axiosInstance.put(`/cauza/donate/${cauza.id}/${user.id}/${sum}/${currency}`).then((response) => {
             console.log(response.data);
+            console.log(user);
+            console.warn(user.coins, user.level, response.data.first, response.data.second)
+            user.coins += response.data.first;
+            user.level += response.data.second;
+            console.warn(user.coins, user.level, response.data.first, response.data.second)
+            allCases.forEach(cauza2 => {
+                if (cauza2.id === cauza.id) {
+                    cauza2.sumaStransa += sum;
+                }
+            })
+            setAllCases(allCases);
+            user.cauze.forEach(cauza2 => {
+                if (cauza2.id === cauza.id) {
+                    cauza2.sumaStransa += sum;
+                }
+            })
+            setUser(User.copy(user));
+            console.log(user);
             setIsExpanded(false);
             setShowModal(true);
+
         }).catch(error => {
             console.log(error.response.data);
             setIsExpanded(false);

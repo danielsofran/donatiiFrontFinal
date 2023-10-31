@@ -22,6 +22,25 @@ export class User implements Serializable<User>{
     donatii: Donatie[] = []; // lista de donatii facute de user-ul curent
     cauze: Cauza[] = []; // lista id-urilor cauzelor create de user-ul curent
 
+    static copy(user: User): User {
+        let rez: User = new User();
+        rez.id = user.id;
+        rez.username = user.username;
+        rez.email = user.email;
+        rez.parola = user.parola;
+        rez.fullName = user.fullName;
+        rez.gender = user.gender;
+        rez.coins = user.coins;
+        rez.level = user.level;
+        rez.interese = user.interese;
+        rez.costumizabile = user.costumizabile;
+        rez.echipate = user.echipate;
+        rez.sustineri = user.sustineri;
+        rez.donatii = user.donatii;
+        rez.cauze = user.cauze;
+        return rez;
+    }
+
     deserialize(json: any): User {
         // WARNING: may fail if there is an empty array as CauzaPersonala, and a new lis
         let rez: User = Object.assign(new User(), json);

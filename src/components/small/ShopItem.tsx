@@ -3,10 +3,12 @@ import {View, Text, Image, StyleSheet, TouchableOpacity} from 'react-native';
 import {API_URL, axiosInstance} from "../../api/axiosInstance";
 import {Costumizabil, CostumizabilState} from "../../model/Costumizabil";
 import {UserContext} from "../../utils/context/UserContext";
+import {useAuth} from "../../utils/context/UseAuth";
+import {User} from "../../model/User";
 
 const ShopItem = ({ item, call, setEquippedItemId, equippedItemId }) => {
     // @ts-ignore
-    const { user, setUser } = useContext(UserContext);
+    const { user, setUser } = useAuth();
     //
     const [isDisabled, setIsDisabled] = useState(user.level < item.levelMin || user.coins < item.costBani);
     const [isPurchased, setIsPurchased] = useState(user.costumizabile.find(c => c.id === item.id));
@@ -35,7 +37,7 @@ const ShopItem = ({ item, call, setEquippedItemId, equippedItemId }) => {
                 setIsPurchased(true);
                 user.costumizabile.push(item);
                 user.coins -= item.costBani;
-                setUser(user)
+                setUser(User.copy(user));
             }).catch(error => {
                 console.log(error.response.data)
             });

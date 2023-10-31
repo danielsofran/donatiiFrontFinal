@@ -6,6 +6,7 @@ import Card from "../game_utils/Card";
 import {GameOver} from "../game_utils/GameOver";
 import {axiosInstance} from "../../api/axiosInstance";
 import {useAuth} from "../../utils/context/UseAuth";
+import {User} from "../../model/User";
 
 const MemoryGame = () => {
     const {user, setUser} = useAuth();
@@ -200,7 +201,7 @@ const MemoryGame = () => {
             let coins = 10;
             axiosInstance.put(`user/resources/${user.id}/${coins}/0`).then((res) => {
                 user.coins += coins;
-                setUser(user);
+                setUser(User.copy(user));
                 setShowGameOver(true);
                 setTimeout(() => {
                     setShowGameOver(false);

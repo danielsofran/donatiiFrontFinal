@@ -56,7 +56,7 @@ const Register = ({ navigation }) => {
                 }).catch(error => {
                 console.log(error)
                 //if(error.response.status === 400) {
-                setErrortext(error.response.data)
+                setErrortext('User with this email already exists')
                 hideDog()
                 //}
             });

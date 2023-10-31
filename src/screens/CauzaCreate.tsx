@@ -10,6 +10,7 @@ import { AnimalTag } from "../components/small/AnimalTag";
 import {API_URL, axiosInstance} from "../api/axiosInstance";
 import {CauzaAdapost, CauzaPersonala, deserializeCauza} from "../model/Cauza";
 import {useAuth} from "../utils/context/UseAuth";
+import {User} from "../model/User";
 
 const CauzaCreate = ({ navigation }) => {
     const [title, setTitle] = useState("");
@@ -124,7 +125,7 @@ const CauzaCreate = ({ navigation }) => {
                         let cauza = deserializeCauza(response.data)
                         console.log(cauza);
                         user.cauze.push(cauza);
-                        setUser(user);
+                        setUser(User.copy(user));
 
                         console.warn("all cases")
                         console.warn(allCases, setAllCases)
@@ -160,7 +161,7 @@ const CauzaCreate = ({ navigation }) => {
                                 let cauza = deserializeCauza(response.data)
                                 console.log(cauza);
                                 user.cauze.push(cauza);
-                                setUser(user);
+                                setUser(User.copy(user));
 
                                 console.warn("all cases")
                                 console.warn(allCases, setAllCases)

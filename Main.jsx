@@ -10,6 +10,9 @@ import {Image, TouchableOpacity, View} from "react-native";
 import {createStackNavigator} from "@react-navigation/stack";
 import Shop from "./src/screens/Shop";
 import {Games} from "./src/components/navbar/Games";
+import Presentation from "./src/screens/Presentation";
+import {FontAwesome} from "@expo/vector-icons";
+import {Help} from "./src/screens/Help";
 
 const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
@@ -23,6 +26,8 @@ const getSymbol = (screen) => {
         case 'Setari': return '⚙';
         case 'Shop': return '🛒';
         case 'Games': return '🎮';
+        case 'About us': return '📖';
+        case 'Help': return '❓';
     }
 }
 
@@ -37,7 +42,6 @@ const NavigationDrawerStructure = (props) => {
     return (
         <View style={{ flexDirection: 'row' }}>
             <TouchableOpacity onPress={toggleDrawer}>
-                {/*Donute Button Image */}
                 <Image
                     source={{
                         uri:
@@ -50,6 +54,14 @@ const NavigationDrawerStructure = (props) => {
     );
 };
 
+const questionMark = (navigation) => {
+    return (
+        <TouchableOpacity onPress={() => navigation.navigate('HelpStack')}>
+            <FontAwesome name={'question-circle-o'} size={36} color={'white'} style={{marginRight: 25}}/>
+        </TouchableOpacity>
+    );
+}
+
 /* region Stacks */
 const HomeStack = ({navigation}) => {
     return (
@@ -60,6 +72,7 @@ const HomeStack = ({navigation}) => {
                 options={{
                     title: getSymbol('Home')+' Home', //Set Header Title
                     headerLeft: () => <NavigationDrawerStructure navigationProps={navigation} />,
+                    headerRight: () => questionMark(navigation),
                     headerStyle: {
                         backgroundColor: 'rgba(127, 127, 213, 1)', //Set Header color
                     },
@@ -82,6 +95,7 @@ const CauzeleMeleStack = ({navigation}) => {
                 options={{
                     title: getSymbol('CauzeleMele')+' My Cases', //Set Header Title
                     headerLeft: () => <NavigationDrawerStructure navigationProps={navigation} />,
+                    headerRight: () => questionMark(navigation),
                     headerStyle: {
                         backgroundColor: 'rgba(127, 127, 213, 1)', //Set Header color
                     },
@@ -104,6 +118,7 @@ const AdaugaStack = ({navigation}) => {
                 options={{
                     title: getSymbol('Adauga')+' Create a Case', //Set Header Title
                     headerLeft: () => <NavigationDrawerStructure navigationProps={navigation} />,
+                    headerRight: () => questionMark(navigation),
                     headerStyle: {
                         backgroundColor: 'rgba(127, 127, 213, 1)', //Set Header color
                     },
@@ -126,6 +141,7 @@ const ShopStack = ({navigation}) => {
                 options={{
                     title: getSymbol('Shop')+' Shop', //Set Header Title
                     headerLeft: () => <NavigationDrawerStructure navigationProps={navigation} />,
+                    headerRight: () => questionMark(navigation),
                     headerStyle: {
                         backgroundColor: 'rgba(127, 127, 213, 1)', //Set Header color
                     },
@@ -148,6 +164,7 @@ const ProfilStack = ({navigation}) => {
                 options={{
                     title: getSymbol('Profile')+' Profile', //Set Header Title
                     headerLeft: () => <NavigationDrawerStructure navigationProps={navigation} />,
+                    headerRight: () => questionMark(navigation),
                     headerStyle: {
                         backgroundColor: 'rgba(127, 127, 213, 1)', //Set Header color
                     },
@@ -170,6 +187,7 @@ const GamesStack = ({navigation}) => {
                 options={{
                     title: getSymbol('Games')+'️ Games', //Set Header Title
                     headerLeft: () => <NavigationDrawerStructure navigationProps={navigation} />,
+                    headerRight: () => questionMark(navigation),
                     headerStyle: {
                         backgroundColor: 'rgba(127, 127, 213, 1)', //Set Header color
                     },
@@ -192,6 +210,53 @@ const SetariStack = ({navigation}) => {
                 options={{
                     title: getSymbol('Setari')+'️ Settings', //Set Header Title
                     headerLeft: () => <NavigationDrawerStructure navigationProps={navigation} />,
+                    headerRight: () => questionMark(navigation),
+                    headerStyle: {
+                        backgroundColor: 'rgba(127, 127, 213, 1)', //Set Header color
+                    },
+                    headerTintColor: '#fff', //Set Header text color
+                    headerTitleStyle: {
+                        fontWeight: 'bold', //Set Header text style
+                    },
+                }}
+            />
+        </Stack.Navigator>
+    );
+}
+
+const HelpStack = ({navigation}) => {
+    return (
+        <Stack.Navigator initialRouteName="Help">
+            <Stack.Screen
+                name="Help"
+                component={Help}
+                options={{
+                    title: getSymbol('Help')+'️ Help', //Set Header Title
+                    headerLeft: () => <NavigationDrawerStructure navigationProps={navigation} />,
+                    // headerRight: () => questionMark(navigation),
+                    headerStyle: {
+                        backgroundColor: 'rgba(127, 127, 213, 1)', //Set Header color
+                    },
+                    headerTintColor: '#fff', //Set Header text color
+                    headerTitleStyle: {
+                        fontWeight: 'bold', //Set Header text style
+                    },
+                }}
+            />
+        </Stack.Navigator>
+    );
+}
+
+const AboutUsStack = ({navigation}) => {
+    return (
+        <Stack.Navigator initialRouteName="About us">
+            <Stack.Screen
+                name="About us"
+                component={Presentation}
+                options={{
+                    title: getSymbol('About us')+'️ Settings', //Set Header Title
+                    headerLeft: () => <NavigationDrawerStructure navigationProps={navigation} />,
+                    headerRight: () => questionMark(navigation),
                     headerStyle: {
                         backgroundColor: 'rgba(127, 127, 213, 1)', //Set Header color
                     },
@@ -205,6 +270,7 @@ const SetariStack = ({navigation}) => {
     );
 }
 /* endregion */
+
 
 export const Main = () => {
     return (
@@ -244,6 +310,14 @@ export const Main = () => {
                 name="SetariStack"
                 component={SetariStack}
                 options={{drawerLabel: getSymbol("Setari")+"️ Settings"}}/>
+            <Drawer.Screen
+                name="HelpStack"
+                component={HelpStack}
+                options={{drawerLabel: getSymbol("Help")+"️ Help"}}/>
+            <Drawer.Screen
+                name="AboutUsStack"
+                component={AboutUsStack}
+                options={{drawerLabel: getSymbol("About us")+"️ About us"}}/>
         </Drawer.Navigator>
     )
 }

@@ -11,6 +11,7 @@ import {axiosInstance} from "../api/axiosInstance";
 import {TagAnimal} from "../model/TagAnimal";
 import {AnimalTag} from "../components/small/AnimalTag";
 import WebNavbar from "../components/navbar/Web";
+import {User} from "../model/User";
 
 const ProfileConfig = ({ navigation }) => {
     // @ts-ignore
@@ -67,13 +68,15 @@ const ProfileConfig = ({ navigation }) => {
             user.fullName = fullname;
             user.gender = gender;
             user.interese = interests;
+            console.log(user);
+            console.log(JSON.stringify(user));
             axiosInstance.put('/user/' + user.id, user).then((response) => {
                 setLoading(false);
                 setErrorColor('blue');
                 setErrortext('Profile updated successfully');
                 alert('Profile updated successfully');
                 setLoading(false);
-                setUser(user);
+                setUser(User.copy(user));
             }).catch(error => {
                 console.log(error.response.data);
                 alert('Error updating profile')
